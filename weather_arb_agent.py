@@ -29,7 +29,17 @@ except ImportError:
         def invoke(self, state): return state
     END = "__end__"
 
+from persistence import PersistenceManager
+
 load_dotenv()
+
+# --- Simulation Mode Flag ---
+SIMULATION_MODE = os.getenv("SIMULATION_MODE", "true").lower() == "true"
+HUMAN_APPROVAL_REQUIRED = os.getenv("HUMAN_APPROVAL_REQUIRED", "true").lower() == "true"
+
+# Initialize Persistence
+db = PersistenceManager()
+
 
 # --- 1. Shared State Definition ---
 class AgentState(TypedDict):
@@ -174,22 +184,12 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
         return {"cycle_logs": state.get("cycle_logs", []) + [f"Researcher error: {str(e)}"]}
 
 def load_priors() -> Dict[str, float]:
-    """Loads historical priors from a local JSON file."""
-    try:
-        if os.path.exists("hist_priors.json"):
-            with open("hist_priors.json", "r") as f:
-                return json.load(f)
-    except Exception as e:
-        print(f"[ANALYST] Error loading priors: {e}")
+    """Deprecated: using PersistenceManager."""
     return {}
 
 def save_priors(priors: Dict[str, float]):
-    """Saves updated priors to a local JSON file."""
-    try:
-        with open("hist_priors.json", "w") as f:
-            json.dump(priors, f, indent=2)
-    except Exception as e:
-        print(f"[ANALYST] Error saving priors: {e}")
+    """Deprecated: using PersistenceManager."""
+    pass
 
 def analyst_agent(state: AgentState) -> Dict[str, Any]:
     """
@@ -201,7 +201,6 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
     
     p_models = {}
     edge_deltas = {}
-    priors = load_priors()
     
     markets = state.get("current_markets", [])
     forecasts = state.get("weather_forecasts", {})
@@ -260,13 +259,13 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
 
         # 4. Bayesian Updating
         # posterior = (likelihood * prior) / evidence
-        prior = priors.get(m_id, 0.5) # Default prior of 0.5
+        prior = db.get_prior(m_id) # Default prior of 0.5 from DB
         evidence = (likelihood * prior) + ((1 - likelihood) * (1 - prior))
         
         p_model = (likelihood * prior) / evidence if evidence > 0 else likelihood
         
         # Persist posterior as the new prior for the next cycle
-        priors[m_id] = float(p_model)
+        db.save_prior(m_id, float(p_model))
         
         # 5. Edge Detection
         # Polymarket P_implied = 1 - price (as per user instruction)
@@ -280,8 +279,7 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
         
         print(f" -> Market: {m_id} | Post: {p_model:.2f} | Mkt: {p_market:.2f} | Edge: {delta:+.2f}")
 
-    # Save all updated priors
-    save_priors(priors)
+    # db.save_prior handled per market during loop
     
     return {
         "probabilities": p_models,
@@ -475,31 +473,50 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
             print(f" -> PLACING ORDER: {m_id} | Side: {side_type} | Limit: {limit_price} | Size: {size} USDC")
             
             # 3. Create Order
-            order = poly.create_order(
-                token_id=token_id,
-                side="buy", # All trades here are 'buy' of a specific outcome token
-                size=size,
-                price=limit_price
-            )
-            
-            order_id = order.get("id")
+            if SIMULATION_MODE:
+                print(f" -> [SIMULATION] Would place order: {m_id} | Token: {token_id} | Size: {size} USDC | Price: {limit_price}")
+                order_id = f"sim_{int(time.time())}_{m_id}"
+                status_val = "simulation"
+            else:
+                if HUMAN_APPROVAL_REQUIRED:
+                    # In a real CLI/Bot context, this might wait for input, 
+                    # but here we log and skip if not preset or just alert.
+                    # For this implementation, we assume human-approval flag in state.
+                    if not state.get("human_approval"):
+                        print(f" -> [WAITING] Human approval required for {m_id}. Skipping.")
+                        continue
+
+                order = poly.create_order(
+                    token_id=token_id,
+                    side="buy", # All trades here are 'buy' of a specific outcome token
+                    size=size,
+                    price=limit_price
+                )
+                order_id = order.get("id")
+                status_val = "pending"
+
             if order_id:
-                # 4. Follow-up Poll for Confirmation
-                time.sleep(2) # Brief wait for matching
-                status = poly.fetch_order(order_id)
-                print(f" -> Order {order_id} Status: {status.get('status')}")
+                # 4. Follow-up Poll for Confirmation (Mocked for simulation)
+                if not SIMULATION_MODE:
+                    time.sleep(2) # Brief wait for matching
+                    status = poly.fetch_order(order_id)
+                    status_val = status.get('status', 'unknown')
+                
+                print(f" -> Order {order_id} Status: {status_val}")
+                
+                db.log_trade(m_id, side_type, size, limit_price, status_val)
                 
                 executed_trades.append({
                     "market": m_id,
                     "side": side_type,
                     "size": size,
                     "price": limit_price,
-                    "status": status.get('status')
+                    "status": status_val
                 })
         
         # 5. Notify via Telegram
-        if executed_trades:
-            msg = "✅ *TRADES EXECUTED*\n"
+            mode_str = "[SIMULATION]" if SIMULATION_MODE else "✅"
+            msg = f"{mode_str} *TRADES EXECUTED*\n"
             for t in executed_trades:
                 msg += f"- {t['market']}: {t['side']} {t['size']} USDC @ {t['price']} ({t['status']})\n"
             send_telegram_msg(msg)
@@ -608,11 +625,10 @@ def run_agent_loop(is_paused: bool = False) -> bool:
         for log in final_state["cycle_logs"]:
             print(f" - {log}")
             
-        # Send PnL Update (Real calculation would involve poly.fetch_balance() or portfolio value)
-        # Mocking for demonstration as requested
-        pnl = np.random.uniform(-0.5, 1.2)
-        send_telegram_msg(f"📊 *CYCLE SUMMARY*\n- Exposure: ${final_state.get('total_exposure', 0):.2f}\n- Cycle PnL: ${pnl:+.2f}\n- Status: {'PAUSED' if final_state.get('pause_flag') else 'ACTIVE'}")
-        
+        # Update bankroll history
+        # Mocking balance/equity for now
+        db.update_bankroll(BANKROLL + pnl, BANKROLL + pnl)
+
         return final_state.get("pause_flag", False)
 
     except Exception as e:
@@ -625,6 +641,8 @@ if __name__ == "__main__":
     print("--------------------------------------------------")
     print("Weather Arbitrage Autonomous AI Agent v1.0")
     print("Architecture: Multi-Agent LangGraph | Execution: PMXT")
+    print(f"Mode: {'SIMULATION' if SIMULATION_MODE else 'LIVE'}")
+    print(f"Human Approval: {HUMAN_APPROVAL_REQUIRED}")
     print("--------------------------------------------------")
     
     # Run in a cron-like schedule every 900 seconds
@@ -642,5 +660,13 @@ if __name__ == "__main__":
             print(f"Loop error: {e}")
             system_paused = True # Pause on unexpected loop errors
         
+        # Daily Summary logic
+        current_hour = datetime.now().hour
+        current_minute = datetime.now().minute
+        if current_hour == 8 and current_minute < 15: # Run around 8 AM
+            summary = db.get_daily_summary()
+            summary_msg = f"📅 *DAILY REPORT*\n- Date: {summary['timestamp'][:10]}\n- Trades: {summary['trade_count']}\n- Balance: ${summary['current_balance']:.2f}"
+            send_telegram_msg(summary_msg)
+
         print(f"\n[SLEEP] Waiting {POLL_INTERVAL}s for next cycle...")
         time.sleep(POLL_INTERVAL)

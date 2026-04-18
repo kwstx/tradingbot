@@ -3,6 +3,8 @@ langgraph
 scipy
 numpy
 requests
+httpx
 python-dotenv
 schedule
 python-telegram-bot
+pandas
