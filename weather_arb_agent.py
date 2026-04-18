@@ -1,5 +1,7 @@
 import os
 import time
+import json
+import re
 import numpy as np
 import scipy.stats as stats
 import schedule
@@ -38,6 +40,7 @@ class AgentState(TypedDict):
     current_markets: List[Dict[str, Any]]
     weather_forecasts: Dict[str, Any]
     probabilities: Dict[str, float]
+    edge_deltas: Dict[str, float]
     ev_values: Dict[str, float]
     position_sizes: Dict[str, float]
     risk_flags: List[str]
@@ -149,27 +152,120 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
         print(f"[CRITICAL ERROR] Researcher node failed: {e}")
         return {"cycle_logs": state.get("cycle_logs", []) + [f"Researcher error: {str(e)}"]}
 
+def load_priors() -> Dict[str, float]:
+    """Loads historical priors from a local JSON file."""
+    try:
+        if os.path.exists("hist_priors.json"):
+            with open("hist_priors.json", "r") as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"[ANALYST] Error loading priors: {e}")
+    return {}
+
+def save_priors(priors: Dict[str, float]):
+    """Saves updated priors to a local JSON file."""
+    try:
+        with open("hist_priors.json", "w") as f:
+            json.dump(priors, f, indent=2)
+    except Exception as e:
+        print(f"[ANALYST] Error saving priors: {e}")
+
 def analyst_agent(state: AgentState) -> Dict[str, Any]:
     """
     Analyst Node:
-    Runs quantitative models (Gaussian ensemble, Bayesian updating).
-    Calculates the 'fair' probability of market outcomes based on forecast data.
+    Processes weather forecasts as Gaussian ensembles and applies Bayesian updating.
+    Calculates the 'fair' probability and edge delta vs Polymarket pricing.
     """
-    print("[ANALYST] Running quantitative ensemble models...")
+    print("[ANALYST] Running quantitative ensemble models and Bayesian updates...")
     
-    # Quantitative calculation using scipy.stats
-    threshold = 75.0
-    forecast_mean = 76.5
-    forecast_std = 2.0
+    p_models = {}
+    edge_deltas = {}
+    priors = load_priors()
     
-    # Calculate probability: P(Temp > 75) = 1 - Normal_CDF(75)
-    model_prob = 1 - stats.norm.cdf(threshold, forecast_mean, forecast_std)
+    markets = state.get("current_markets", [])
+    forecasts = state.get("weather_forecasts", {})
     
-    probs = {"wx-nyc-75": round(float(model_prob), 4)}
+    for market in markets:
+        m_id = market["id"]
+        question = market["question"]
+        city = market.get("city")
+        
+        # 1. Extract Thresholds (Bounds) from Question
+        # Supports "above X", "below X", and "X-Y" buckets
+        upper_bound = float('inf')
+        lower_bound = float('-inf')
+        
+        # Check for range/bucket: "70-75", "70 to 75", "between 70 and 75"
+        bucket_match = re.search(r'(\d+(?:\.\d+)?)\s*(?:-|to|and)\s*(\d+(?:\.\d+)?)', question)
+        if bucket_match:
+            lower_bound = float(bucket_match.group(1))
+            upper_bound = float(bucket_match.group(2))
+        else:
+            # Check for direction
+            match_above = re.search(r'(?:above|over|>|greater than)\s+(\d+(?:\.\d+)?)', question, re.I)
+            match_below = re.search(r'(?:below|under|<|less than)\s+(\d+(?:\.\d+)?)', question, re.I)
+            if match_above:
+                lower_bound = float(match_above.group(1))
+            elif match_below:
+                upper_bound = float(match_below.group(1))
+            else:
+                # Fallback: find any degree mention
+                match_deg = re.search(r'(\d+(?:\.\d+)?)\b', question)
+                if match_deg:
+                    lower_bound = float(match_deg.group(1))
+
+        # 2. Extract Ensemble Samples for the City
+        city_data = forecasts.get(city, {})
+        hourly_temps = city_data.get("open_meteo", {}).get("hourly", {}).get("temperature_2m", [])
+        
+        if not hourly_temps:
+            print(f" -> Skipping {m_id}: No ensemble data for {city}")
+            continue
+
+        # Treat hourly forecasts as an ensemble over the next 24 hours (default window)
+        samples = np.array(hourly_temps[:24])
+        mu = np.mean(samples)
+        sigma = np.std(samples)
+        if sigma < 0.1: sigma = 0.1 # Stability constant
+
+        # 3. Calculate Model Probability (Likelihood) using CDF
+        # Calculation: P(lower < X < upper) = CDF(upper) - CDF(lower)
+        # Using standardized inputs as requested
+        z_upper = (upper_bound - mu) / sigma
+        z_lower = (lower_bound - mu) / sigma
+        
+        likelihood = stats.norm.cdf(z_upper) - stats.norm.cdf(z_lower)
+        likelihood = max(0.0001, min(0.9999, likelihood)) # Bound for Bayes
+
+        # 4. Bayesian Updating
+        # posterior = (likelihood * prior) / evidence
+        prior = priors.get(m_id, 0.5) # Default prior of 0.5
+        evidence = (likelihood * prior) + ((1 - likelihood) * (1 - prior))
+        
+        p_model = (likelihood * prior) / evidence if evidence > 0 else likelihood
+        
+        # Persist posterior as the new prior for the next cycle
+        priors[m_id] = float(p_model)
+        
+        # 5. Edge Detection
+        # Polymarket P_implied = 1 - price (as per user instruction)
+        price_yes = market.get("current_odds", 0.5)
+        p_market = 1.0 - price_yes
+        
+        delta = p_model - p_market
+        
+        p_models[m_id] = round(float(p_model), 4)
+        edge_deltas[m_id] = round(float(delta), 4)
+        
+        print(f" -> Market: {m_id} | Post: {p_model:.2f} | Mkt: {p_market:.2f} | Edge: {delta:+.2f}")
+
+    # Save all updated priors
+    save_priors(priors)
     
     return {
-        "probabilities": probs,
-        "cycle_logs": state.get("cycle_logs", []) + [f"Analyst: Model probability calculated ({probs['wx-nyc-75']})."]
+        "probabilities": p_models,
+        "edge_deltas": edge_deltas,
+        "cycle_logs": state.get("cycle_logs", []) + [f"Analyst: Refined {len(p_models)} probabilities vs market pricing."]
     }
 
 def decision_agent(state: AgentState) -> Dict[str, Any]:
@@ -324,6 +420,7 @@ def run_agent_loop():
         "current_markets": [],
         "weather_forecasts": {},
         "probabilities": {},
+        "edge_deltas": {},
         "ev_values": {},
         "position_sizes": {},
         "risk_flags": [],
