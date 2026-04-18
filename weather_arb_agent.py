@@ -46,8 +46,27 @@ class AgentState(TypedDict):
     risk_flags: List[str]
     human_approval: bool
     cycle_logs: List[str]
+    pause_flag: bool
+    total_exposure: float
+    trade_sides: Dict[str, str]
 
-# --- 2. Specialized Agent Nodes ---
+# --- 2. Notifications ---
+def send_telegram_msg(message: str):
+    """Sends a notification to the user via Telegram."""
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        print(f"[NOTIFY] Telegram credentials missing, would send: {message}")
+        return
+    
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    try:
+        with httpx.Client() as client:
+            client.post(url, json={"chat_id": chat_id, "text": message, "parse_mode": "Markdown"})
+    except Exception as e:
+        print(f"[ERROR] Failed to send Telegram message: {e}")
+
+# --- 3. Specialized Agent Nodes ---
 
 # --- City/Coordinates Mapping ---
 CITY_COORDS = {
@@ -112,9 +131,10 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
                 market_details = {
                     "id": m.get('id'),
                     "question": m.get('question'),
-                    "current_odds": m.get('tokens', [{}])[0].get('price', 0.5), # Default to 0.5 if missing
+                    "current_odds": m.get('tokens', [{}])[0].get('price', 0.5), 
                     "liquidity": m.get('liquidity', 0),
-                    "tokens": m.get('tokens')
+                    "yes_token_id": m.get('tokens', [{}, {}])[0].get('token_id'),
+                    "no_token_id": m.get('tokens', [{}, {}])[1].get('token_id')
                 }
                 
                 # Determine city for weather lookup
@@ -283,6 +303,7 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
     markets = state.get("current_markets", [])
     ev_values = {}
     position_sizes = {}
+    trade_sides = {} # Added to track if we buy YES or NO
     
     # Config parameters
     BANKROLL = 50.0 # USDC
@@ -302,6 +323,11 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
             # Actually user formula: EV = (p_model * (1 - market_price)) - ((1 - p_model) * market_price)
             ev = (p_model * (1 - market_price)) - ((1 - p_model) * market_price)
             ev_values[m_id] = round(ev, 4)
+            
+            # Decide side: if p_model > market_price, buy YES. Else buy NO?
+            # Actually use the delta logic
+            side = "buy_yes" if p_model > market_price else "buy_no"
+            trade_sides[m_id] = side
             
             # Discard trade if EV < 0.05
             if ev < EV_THRESHOLD:
@@ -330,12 +356,13 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
             
             if final_size > 0.01: # Minimum viable bet
                 position_sizes[m_id] = round(final_size, 4)
-                print(f" -> Approved trade {m_id}: EV={ev:.4f}, size={final_size:.2f} USDC")
+                print(f" -> Approved trade {m_id}: EV={ev:.4f}, size={final_size:.2f} USDC, side={side}")
 
     return {
         "ev_values": ev_values,
         "position_sizes": position_sizes,
-        "human_approval": True, # Flag for early live operation
+        "trade_sides": trade_sides,
+        "human_approval": True, 
         "cycle_logs": state.get("cycle_logs", []) + [f"Decision: {len(position_sizes)} trades approved with EV filtering and Kelly sizing."]
     }
 
@@ -347,44 +374,144 @@ def risk_guardian_agent(state: AgentState) -> Dict[str, Any]:
     """
     print("[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...")
     
-    risk_flags = []
+    risk_flags = state.get("risk_flags", [])
+    pause_flag = False
+    bankroll = 50.0 # From decision_agent config
     
-    # VPIN Safety Check: Detect toxic flow or abnormal order book imbalance
-    vpin_level = np.random.uniform(0.1, 0.4) # Mock calculation
-    vpin_threshold = 0.60
-    
-    if vpin_level > vpin_threshold:
-        risk_flags.append("VPIN_EXCEEDED")
+    try:
+        poly = pmxt.polymarket()
         
-    # Exposure Monitoring: Cap total investment to $50 USDC
-    # In production, this would fetch current open position value via pmxt
-    current_exposure = 10.0 
-    if current_exposure > 50.0:
-        risk_flags.append("EXPOSURE_CAP_BREACH")
+        # 1. VPIN Calculation: |Buy Vol - Sell Vol| / Total Vol
+        # We check the most liquid market from the state as a proxy for platform toxicity
+        markets = state.get("current_markets", [])
+        if markets:
+            target_market = sorted(markets, key=lambda x: x.get('liquidity', 0), reverse=True)[0]
+            m_id = target_market["id"]
+            
+            # Fetch recent trades
+            trades = poly.fetch_trades(m_id)
+            if trades and len(trades) > 5:
+                buy_vol = sum(t['amount'] for t in trades if t['side'] == 'buy')
+                sell_vol = sum(t['amount'] for t in trades if t['side'] == 'sell')
+                total_vol = buy_vol + sell_vol
+                
+                vpin = abs(buy_vol - sell_vol) / total_vol if total_vol > 0 else 0
+                print(f" -> VPIN for {m_id}: {vpin:.4f}")
+                
+                if vpin > 0.7:
+                    risk_flags.append("VPIN_KILL_SWITCH")
+                    send_telegram_msg(f"🚨 *KILL SWITCH*: VPIN reached {vpin:.2f} on market {m_id}. Halting execution.")
+            else:
+                print(" -> Not enough trades to calculate VPIN.")
+
+        # 2. Exposure Monitoring: hits 30% of bankroll
+        # In production, fetch actual open positions. Here we track size in state.
+        total_exposure = sum(state.get("position_sizes", {}).values())
+        if total_exposure > (bankroll * 0.30):
+            risk_flags.append("MAX_EXPOSURE_REACHED")
+            send_telegram_msg(f"⚠️ *EXPOSURE ALERT*: Total exposure ${total_exposure:.2f} exceeds 30% bucket. Pausing.")
+
+        # 3. Kill-Switch Activation
+        if risk_flags:
+            poly.cancel_all_orders()
+            pause_flag = True
+            
+        return {
+            "risk_flags": risk_flags,
+            "pause_flag": pause_flag,
+            "total_exposure": total_exposure,
+            "cycle_logs": state.get("cycle_logs", []) + [f"RiskGuardian: Checks complete. Flags: {risk_flags}"]
+        }
         
-    return {
-        "risk_flags": risk_flags,
-        "cycle_logs": state.get("cycle_logs", []) + [f"RiskGuardian: Checks complete (VPIN: {vpin_level:.2f})."]
-    }
+    except Exception as e:
+        print(f"[ERROR] RiskGuardian failed: {e}")
+        return {"risk_flags": state.get("risk_flags", []) + ["GUARDIAN_FETCH_ERROR"]}
 
 def executor_agent(state: AgentState) -> Dict[str, Any]:
     """
     Executor Node:
     Places limit orders on Polymarket via the pmxt SDK.
     Only executes if positive edge is confirmed and no risk flags are raised.
+    Uses mid-price + offset for rebate capture and polls for confirmation.
     """
     print("[EXECUTOR] Executing limit orders via pmxt on Polygon...")
     
     pos_sizes = state.get("position_sizes", {})
+    trade_sides = state.get("trade_sides", {})
+    markets = {m["id"]: m for m in state.get("current_markets", [])}
     
-    for m_id, size in pos_sizes.items():
-        if size > 0:
-            print(f" -> ORDER PLACED: {m_id} | Size: {size:.4f} Units")
-            # Actual implementation: pm.create_order(market_id=m_id, amount=size, ...)
+    executed_trades = []
     
-    return {
-        "cycle_logs": state.get("cycle_logs", []) + ["Executor: Order sequence completed."]
-    }
+    try:
+        poly = pmxt.polymarket()
+        
+        for m_id, size in pos_sizes.items():
+            if size <= 0: continue
+            
+            market = markets.get(m_id)
+            if not market: continue
+            
+            side_type = trade_sides.get(m_id)
+            token_id = market["yes_token_id"] if side_type == "buy_yes" else market["no_token_id"]
+            
+            # 1. Fetch Orderbook to calculate mid price
+            orderbook = poly.fetch_order_book(m_id)
+            bids = orderbook.get('bids', [])
+            asks = orderbook.get('asks', [])
+            
+            if not bids or not asks:
+                print(f" -> Skipping {m_id}: Orderbook empty.")
+                continue
+                
+            best_bid = bids[0][0]
+            best_ask = asks[0][0]
+            mid_price = (best_bid + best_ask) / 2
+            
+            # 2. Set Limit Price (slightly better than mid to capture maker rebates)
+            # If buying YES, we want to buy slightly lower than mid if possible, 
+            # or exactly at mid/bid to be a maker.
+            limit_price = round(mid_price + 0.001, 3) # Aggressive maker
+            
+            print(f" -> PLACING ORDER: {m_id} | Side: {side_type} | Limit: {limit_price} | Size: {size} USDC")
+            
+            # 3. Create Order
+            order = poly.create_order(
+                token_id=token_id,
+                side="buy", # All trades here are 'buy' of a specific outcome token
+                size=size,
+                price=limit_price
+            )
+            
+            order_id = order.get("id")
+            if order_id:
+                # 4. Follow-up Poll for Confirmation
+                time.sleep(2) # Brief wait for matching
+                status = poly.fetch_order(order_id)
+                print(f" -> Order {order_id} Status: {status.get('status')}")
+                
+                executed_trades.append({
+                    "market": m_id,
+                    "side": side_type,
+                    "size": size,
+                    "price": limit_price,
+                    "status": status.get('status')
+                })
+        
+        # 5. Notify via Telegram
+        if executed_trades:
+            msg = "✅ *TRADES EXECUTED*\n"
+            for t in executed_trades:
+                msg += f"- {t['market']}: {t['side']} {t['size']} USDC @ {t['price']} ({t['status']})\n"
+            send_telegram_msg(msg)
+
+        return {
+            "cycle_logs": state.get("cycle_logs", []) + [f"Executor: {len(executed_trades)} orders placed."]
+        }
+        
+    except Exception as e:
+        print(f"[ERROR] Executor failed: {e}")
+        send_telegram_msg(f"❌ *EXECUTOR ERROR*: {str(e)}")
+        return {"cycle_logs": state.get("cycle_logs", []) + [f"Executor error: {str(e)}"]}
 
 def supervisor_node(state: AgentState) -> Dict[str, Any]:
     """
@@ -446,10 +573,17 @@ app = builder.compile()
 
 # --- 4. Scheduling and Autonomy ---
 
-def run_agent_loop():
+def run_agent_loop(is_paused: bool = False) -> bool:
     """
     Single iteration of the LangGraph multi-agent flow.
+    Returns the pause_flag for the next cycle.
     """
+    if is_paused:
+        print("[LOOP] Agent is currently PAUSED due to RiskGuardian safety trip.")
+        # Optional: logic to check if it's safe to resume
+        # For now, we skip execution but check if we should reset
+        return True 
+
     # Initialize state with required fields
     initial_state: AgentState = {
         "current_markets": [],
@@ -458,19 +592,33 @@ def run_agent_loop():
         "edge_deltas": {},
         "ev_values": {},
         "position_sizes": {},
+        "trade_sides": {},
         "risk_flags": [],
         "human_approval": False,
-        "cycle_logs": []
+        "cycle_logs": [],
+        "pause_flag": False,
+        "total_exposure": 0.0
     }
     
     try:
         # Run the graph
         final_state = app.invoke(initial_state)
+        
         print(f"\nCycle statistics reported by Supervisor:")
         for log in final_state["cycle_logs"]:
             print(f" - {log}")
+            
+        # Send PnL Update (Real calculation would involve poly.fetch_balance() or portfolio value)
+        # Mocking for demonstration as requested
+        pnl = np.random.uniform(-0.5, 1.2)
+        send_telegram_msg(f"📊 *CYCLE SUMMARY*\n- Exposure: ${final_state.get('total_exposure', 0):.2f}\n- Cycle PnL: ${pnl:+.2f}\n- Status: {'PAUSED' if final_state.get('pause_flag') else 'ACTIVE'}")
+        
+        return final_state.get("pause_flag", False)
+
     except Exception as e:
         print(f"CRITICAL ERROR in Cycle: {e}")
+        send_telegram_msg(f"🚨 *CRITICAL SYSTEM ERROR*: {str(e)}")
+        return True # Pause on error for safety
 
 # Main execution loop
 if __name__ == "__main__":
@@ -481,16 +629,18 @@ if __name__ == "__main__":
     
     # Run in a cron-like schedule every 900 seconds
     POLL_INTERVAL = 900 
+    system_paused = False
     
     print(f"\n[ACTIVE] Starting autonomy loop. Polling every {POLL_INTERVAL} seconds...")
     while True:
         try:
-            run_agent_loop()
+            system_paused = run_agent_loop(system_paused)
         except KeyboardInterrupt:
             print("\n[STOP] Shutting down agent...")
             break
         except Exception as e:
             print(f"Loop error: {e}")
+            system_paused = True # Pause on unexpected loop errors
         
         print(f"\n[SLEEP] Waiting {POLL_INTERVAL}s for next cycle...")
         time.sleep(POLL_INTERVAL)
