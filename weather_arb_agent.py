@@ -44,6 +44,7 @@ class AgentState(TypedDict):
     ev_values: Dict[str, float]
     position_sizes: Dict[str, float]
     risk_flags: List[str]
+    human_approval: bool
     cycle_logs: List[str]
 
 # --- 2. Specialized Agent Nodes ---
@@ -272,36 +273,70 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
     """
     Decision Node:
     Applies Expected Value (EV) and Fractional Kelly sizing to filter trades.
-    Only signals trades where the model probability significantly exceeds market odds.
+    Formula: EV = (p_model * (1 - market_price)) - ((1 - p_model) * market_price)
+    Sizing: f_star = (b * p - q) / b with conservative k factor of 0.125.
+    Cap: 15% of balance or 8 USDC max.
     """
-    print("[DECISION] Applying EV thresholds and Kelly positioning...")
+    print("[DECISION] Applying EV filtering and fractional Kelly sizing...")
     
     probs = state["probabilities"]
-    markets = state["current_markets"]
+    markets = state.get("current_markets", [])
     ev_values = {}
     position_sizes = {}
+    
+    # Config parameters
+    BANKROLL = 50.0 # USDC
+    KELLY_K = 0.125
+    EV_THRESHOLD = 0.05
+    CAP_PCT_BALANCE = 0.15
+    CAP_MAX_USDC = 8.0
     
     for market in markets:
         m_id = market["id"]
         if m_id in probs:
-            model_p = probs[m_id]
-            market_p = market["current_odds"]
+            p_model = probs[m_id]
+            market_price = market.get("current_odds", 0.5)
             
-            # Expected Value (EV) calculation: (Edge / Cost)
-            ev = (model_p - market_p) / market_p
-            ev_values[m_id] = ev
+            # 1. Expected Value (EV) = (p * profit) - (q * loss)
+            # profit per 1 USDC bet is (1 - market_price) / market_price * cost? 
+            # Actually user formula: EV = (p_model * (1 - market_price)) - ((1 - p_model) * market_price)
+            ev = (p_model * (1 - market_price)) - ((1 - p_model) * market_price)
+            ev_values[m_id] = round(ev, 4)
             
-            # Trade if EV > 5%
-            if ev > 0.05:
-                # Fractional Kelly Criterion for risk parity
-                b = (1 / market_p) - 1
-                kelly = (model_p * (b + 1) - 1) / b
-                position_sizes[m_id] = round(kelly * 0.1, 4) # 10% Fractional Kelly
-    
+            # Discard trade if EV < 0.05
+            if ev < EV_THRESHOLD:
+                print(f" -> Skipping {m_id}: EV ({ev:.4f}) below threshold.")
+                continue
+                
+            # 2. Fractional Kelly sizing
+            # b = net odds (profit per unit bet). Example: price 0.4 -> b = (1-0.4)/0.4 = 1.5
+            if market_price <= 0 or market_price >= 1: continue
+            b = (1.0 - market_price) / market_price
+            p = p_model
+            q = 1.0 - p
+            
+            f_star = (b * p - q) / b
+            
+            # Apply conservative k factor
+            size_fraction = f_star * KELLY_K
+            
+            # Convert to absolute USDC
+            size_usdc = size_fraction * BANKROLL
+            
+            # 3. Apply Safety Caps
+            # Max 15% of bankroll or $8 per leg
+            balance_cap = BANKROLL * CAP_PCT_BALANCE
+            final_size = max(0, min(size_usdc, balance_cap, CAP_MAX_USDC))
+            
+            if final_size > 0.01: # Minimum viable bet
+                position_sizes[m_id] = round(final_size, 4)
+                print(f" -> Approved trade {m_id}: EV={ev:.4f}, size={final_size:.2f} USDC")
+
     return {
         "ev_values": ev_values,
         "position_sizes": position_sizes,
-        "cycle_logs": state.get("cycle_logs", []) + ["Decision: EV/Kelly filters applied."]
+        "human_approval": True, # Flag for early live operation
+        "cycle_logs": state.get("cycle_logs", []) + [f"Decision: {len(position_sizes)} trades approved with EV filtering and Kelly sizing."]
     }
 
 def risk_guardian_agent(state: AgentState) -> Dict[str, Any]:
@@ -424,6 +459,7 @@ def run_agent_loop():
         "ev_values": {},
         "position_sizes": {},
         "risk_flags": [],
+        "human_approval": False,
         "cycle_logs": []
     }
     
