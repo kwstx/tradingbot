@@ -7,10 +7,13 @@ from typing import TypedDict, List, Dict, Any, Union
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
+import httpx
+import concurrent.futures
+from datetime import datetime
+
 # PMXT and LangGraph imports
-# Note: Ensure these are installed in your environment
 try:
-    from pmxt import Polymarket
+    import pmxt
     from langgraph.graph import StateGraph, END
 except ImportError:
     # Stubs for environment resilience
@@ -42,28 +45,109 @@ class AgentState(TypedDict):
 
 # --- 2. Specialized Agent Nodes ---
 
+# --- City/Coordinates Mapping ---
+CITY_COORDS = {
+    "NYC": {"lat": 40.7128, "lon": -74.0060, "tz": "America/New_York"},
+    "London": {"lat": 51.5074, "lon": -0.1278, "tz": "Europe/London"},
+    "Tokyo": {"lat": 35.6895, "lon": 139.6917, "tz": "Asia/Tokyo"},
+    "Chicago": {"lat": 41.8781, "lon": -87.6298, "tz": "America/Chicago"},
+}
+
+def fetch_weather_data(lat: float, lon: float, tz: str) -> Dict[str, Any]:
+    """
+    Fetches ensemble forecast from Open-Meteo and supplements with NOAA if in US.
+    """
+    results = {}
+    try:
+        # Open-Meteo call
+        om_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m&timezone={tz}"
+        with httpx.Client() as client:
+            resp = client.get(om_url, timeout=10.0)
+            if resp.status_code == 200:
+                results["open_meteo"] = resp.json()
+                
+        # Supplement with NOAA if coordinates are in US (rough check)
+        if 24 < lat < 50 and -125 < lon < -66:
+            noaa_points_url = f"https://api.weather.gov/points/{lat},{lon}"
+            headers = {"User-Agent": "WeatherArbBot/1.0 (contact@example.com)"}
+            with httpx.Client(headers=headers) as client:
+                p_resp = client.get(noaa_points_url, timeout=10.0)
+                if p_resp.status_code == 200:
+                    forecast_url = p_resp.json()["properties"]["forecast"]
+                    f_resp = client.get(forecast_url, timeout=10.0)
+                    if f_resp.status_code == 200:
+                        results["noaa"] = f_resp.json()
+    except Exception as e:
+        print(f"[ERROR] Weather API call failed: {e}")
+    
+    return results
+
 def researcher_agent(state: AgentState) -> Dict[str, Any]:
     """
     Researcher Node:
     Fetches active weather markets from Polymarket using the pmxt SDK
-    and correlates them with real-time weather forecasts.
+    and correlates them with real-time weather forecasts fetched in parallel.
     """
     print("\n[RESEARCHER] Fetching active weather markets and forecasts...")
     
-    # In a production environment, this would call:
-    # markets = pm.get_markets(tag='Weather', active=True)
-    # forecasts = weather_api.get_forecast(location=...)
-    
-    mock_markets = [
-        {"id": "wx-nyc-75", "question": "Will NYC hit 75F on April 20?", "current_odds": 0.45}
-    ]
-    mock_forecasts = {"NYC": {"high_temp_dist": "Gaussian(76.5, 2.0)"}}
-    
-    return {
-        "current_markets": mock_markets,
-        "weather_forecasts": mock_forecasts,
-        "cycle_logs": state.get("cycle_logs", []) + ["Researcher: Market and forecast data ingested."]
-    }
+    try:
+        # Initialize Polymarket client via pmxt
+        # Note: poly.fetch_markets returns all markets, we query/filter for weather
+        poly = pmxt.polymarket() 
+        all_markets = poly.fetch_markets(query="weather")
+        
+        # Filter for active weather markets and extract details
+        weather_markets = []
+        unique_locations = set()
+        
+        for m in all_markets:
+            # Basic validation: check for tokens, price, and liquidity
+            if m.get('active') and m.get('tokens') and m.get('liquidity'):
+                # Heuristic extraction of City and metadata
+                question = m.get('question', '').upper()
+                market_details = {
+                    "id": m.get('id'),
+                    "question": m.get('question'),
+                    "current_odds": m.get('tokens', [{}])[0].get('price', 0.5), # Default to 0.5 if missing
+                    "liquidity": m.get('liquidity', 0),
+                    "tokens": m.get('tokens')
+                }
+                
+                # Determine city for weather lookup
+                city_key = "NYC" # Default
+                for city in CITY_COORDS.keys():
+                    if city.upper() in question:
+                        city_key = city
+                        break
+                
+                market_details["city"] = city_key
+                weather_markets.append(market_details)
+                unique_locations.add(city_key)
+
+        print(f" -> Found {len(weather_markets)} relevant weather markets.")
+
+        # Fetch weather data in parallel for each unique location
+        weather_data_map = {}
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            future_to_city = {
+                executor.submit(fetch_weather_data, CITY_COORDS[c]["lat"], CITY_COORDS[c]["lon"], CITY_COORDS[c]["tz"]): c 
+                for c in unique_locations if c in CITY_COORDS
+            }
+            for future in concurrent.futures.as_completed(future_to_city):
+                city = future_to_city[future]
+                try:
+                    weather_data_map[city] = future.result()
+                except Exception as exc:
+                    print(f" -> {city} forecast generated an exception: {exc}")
+
+        return {
+            "current_markets": weather_markets,
+            "weather_forecasts": weather_data_map,
+            "cycle_logs": state.get("cycle_logs", []) + [f"Researcher: {len(weather_markets)} markets and {len(weather_data_map)} forecasts ingested."]
+        }
+    except Exception as e:
+        print(f"[CRITICAL ERROR] Researcher node failed: {e}")
+        return {"cycle_logs": state.get("cycle_logs", []) + [f"Researcher error: {str(e)}"]}
 
 def analyst_agent(state: AgentState) -> Dict[str, Any]:
     """
@@ -262,13 +346,18 @@ if __name__ == "__main__":
     print("Architecture: Multi-Agent LangGraph | Execution: PMXT")
     print("--------------------------------------------------")
     
-    # Run once immediately
-    run_agent_loop()
+    # Run in a cron-like schedule every 900 seconds
+    POLL_INTERVAL = 900 
     
-    # Schedule to run every 15 minutes for 24/7 autonomy
-    schedule.every(15).minutes.do(run_agent_loop)
-    
-    print("\n[ACTIVE] Monitoring schedule for next cycle...")
+    print(f"\n[ACTIVE] Starting autonomy loop. Polling every {POLL_INTERVAL} seconds...")
     while True:
-        schedule.run_pending()
-        time.sleep(1)
+        try:
+            run_agent_loop()
+        except KeyboardInterrupt:
+            print("\n[STOP] Shutting down agent...")
+            break
+        except Exception as e:
+            print(f"Loop error: {e}")
+        
+        print(f"\n[SLEEP] Waiting {POLL_INTERVAL}s for next cycle...")
+        time.sleep(POLL_INTERVAL)
