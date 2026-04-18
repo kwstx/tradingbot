@@ -1,0 +1,18 @@
+# Virtual Environment
+polymarket-weather-agent/
+venv/
+.venv/
+env/
+
+# Environment Variables
+.env
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS Files
+.DS_Store
+Thumbs.db

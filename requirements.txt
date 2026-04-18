@@ -1,0 +1,8 @@
+pmxt
+langgraph
+scipy
+numpy
+requests
+python-dotenv
+schedule
+python-telegram-bot
