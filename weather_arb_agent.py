@@ -30,6 +30,7 @@ except ImportError:
     END = "__end__"
 
 from persistence import PersistenceManager
+from source_scraper import ResolutionSourceScraper
 
 load_dotenv()
 
@@ -162,12 +163,15 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
                         city_key = city
                         break
                 
-                # Scrape for NOAA station IDs (e.g., KNYC, KLGA)
-                station_id = None
-                station_match = re.search(r'\b(k[a-z]{3})\b', desc + rules)
-                if station_match:
-                    station_id = station_match.group(1).upper()
-                    print(f" -> Detected specific station resolution: {station_id} for {city_key}")
+                # NEW: Use Resolution Source Scraper for high-precision targeting
+                scraper_results = ResolutionSourceScraper.scrape(desc, rules)
+                station_id = scraper_results["station_id"]
+                
+                # Refine coordinates if a specific station was found
+                market_lat, market_lon = CITY_COORDS[city_key]["lat"], CITY_COORDS[city_key]["lon"]
+                if scraper_results["coordinates"]:
+                    market_lat, market_lon = scraper_results["coordinates"]
+                    print(f" -> REFINED COORDS: Using {station_id} coordinates for {city_key}")
 
                 market_details = {
                     "id": m.get('id'),
@@ -177,7 +181,10 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
                     "yes_token_id": m.get('tokens', [{}, {}])[0].get('token_id'),
                     "no_token_id": m.get('tokens', [{}, {}])[1].get('token_id'),
                     "city": city_key,
-                    "station_id": station_id
+                    "station_id": station_id,
+                    "lat": market_lat,
+                    "lon": market_lon,
+                    "tz": CITY_COORDS[city_key]["tz"]
                 }
                 
                 weather_markets.append(market_details)
@@ -185,16 +192,31 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
 
         print(f" -> Found {len(weather_markets)} markets. Scanned rules for station IDs.")
 
-        # 5. Fetch weather data
+        # 5. Fetch weather data (using specific station coordinates if available)
         weather_data_map = {}
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            future_to_city = {
-                executor.submit(fetch_weather_data, CITY_COORDS[c]["lat"], CITY_COORDS[c]["lon"], CITY_COORDS[c]["tz"]): c 
-                for c in unique_locations if c in CITY_COORDS
+            # We now group by unique (lat, lon) to avoid redundant calls, 
+            # but map them back to the market-specific station if needed.
+            # For simplicity in this v2.1 update, we still map to the market ID or a compound key.
+            unique_targets = {}
+            for m in weather_markets:
+                target_key = f"{m['lat']}_{m['lon']}"
+                unique_targets[target_key] = (m['lat'], m['lon'], m['tz'])
+
+            future_to_key = {
+                executor.submit(fetch_weather_data, lat, lon, tz): key 
+                for key, (lat, lon, tz) in unique_targets.items()
             }
-            for future in concurrent.futures.as_completed(future_to_city):
-                city = future_to_city[future]
-                weather_data_map[city] = future.result()
+            
+            temp_weather_results = {}
+            for future in concurrent.futures.as_completed(future_to_key):
+                key = future_to_key[future]
+                temp_weather_results[key] = future.result()
+            
+            # Map back to market-friendly format
+            for m in weather_markets:
+                target_key = f"{m['lat']}_{m['lon']}"
+                weather_data_map[m['id']] = temp_weather_results.get(target_key)
 
         return {
             "current_markets": weather_markets,
@@ -226,7 +248,6 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
     for market in markets:
         m_id = market["id"]
         question = market["question"]
-        city = market.get("city")
         
         # 1. Extract Thresholds
         upper_bound = float('inf')
@@ -244,7 +265,7 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
                 upper_bound = float(match_below.group(1))
 
         # 2. Weighted Ensemble Calculation
-        city_data = forecasts.get(city, {})
+        city_data = forecasts.get(m_id, {})
         om_temps = city_data.get("open_meteo", {}).get("hourly", {}).get("temperature_2m", [])
         
         # Calculate ensemble mu and sigma
