@@ -2,7 +2,7 @@ import json
 import numpy as np
 import pandas as pd
 from datetime import datetime
-from weather_arb_agent import CITY_COORDS, AgentState
+from weather_arb_agent import CITY_COORDS, AgentState, DEFAULT_BANKROLL
 
 # We will reuse the core logic but mock the external world
 from weather_arb_agent import analyst_agent, decision_agent
@@ -19,7 +19,7 @@ class BacktestEngine:
         """
         self.data = pd.read_json(historical_data_path)
         self.results = []
-        self.bankroll = 50.0
+        self.bankroll = DEFAULT_BANKROLL
         self.trades = []
 
     def run(self):
@@ -101,9 +101,9 @@ class BacktestEngine:
             print("No trades executed during backtest.")
             return
 
-        roi = (self.bankroll - 50.0) / 50.0
+        roi = (self.bankroll - DEFAULT_BANKROLL) / DEFAULT_BANKROLL
         # Simple Sharpe (assuming daily trades)
-        returns = df_trades['pnl'] / 50.0
+        returns = df_trades['pnl'] / DEFAULT_BANKROLL
         sharpe = (returns.mean() / returns.std()) * np.sqrt(365) if returns.std() > 0 else 0
         
         print("\n" + "="*30)

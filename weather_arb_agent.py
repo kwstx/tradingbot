@@ -41,6 +41,10 @@ HUMAN_APPROVAL_REQUIRED = os.getenv("HUMAN_APPROVAL_REQUIRED", "true").lower() =
 # Initialize Persistence
 db = PersistenceManager()
 
+# --- 0. Global Config ---
+DEFAULT_BANKROLL = 50.0
+MAX_POSITION_SIZE_PCT = 0.20 # Max 20% of bankroll per trade
+KELLY_FRACTION = 0.125      # Conservative Kelly (1/8th)
 
 # --- 1. Shared State Definition ---
 class AgentState(TypedDict):
@@ -132,14 +136,18 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
         poly = pmxt.polymarket() 
         
         # 1. Fetch Live Bankroll (Dynamic Compounding)
-        balance_info = poly.fetch_balance()
-        usdc_bal = 50.0 
-        if isinstance(balance_info, list):
-            for asset in balance_info:
-                if asset.get('symbol') == 'USDC':
-                    usdc_bal = float(asset.get('free', 50.0))
-                    break
-        print(f" -> Active Bankroll: ${usdc_bal:.2f} USDC")
+        usdc_bal = DEFAULT_BANKROLL 
+        try:
+            balance_info = poly.fetch_balance()
+            if isinstance(balance_info, list):
+                for asset in balance_info:
+                    if asset.get('symbol') == 'USDC':
+                        # Use 'free' for available balance or 'total' for compounding
+                        usdc_bal = float(asset.get('free', DEFAULT_BANKROLL))
+                        break
+            print(f" -> Active Bankroll: ${usdc_bal:.2f} USDC")
+        except Exception as e:
+            print(f" -> [WARN] Balance fetch failed: {e}. Using fallback.")
 
         # 2. Fetch Open Positions (for Early Exit logic)
         open_positions = poly.fetch_positions()
@@ -325,7 +333,7 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
     edge_deltas = state.get("edge_deltas", {})
     markets = state.get("current_markets", [])
     open_positions = state.get("open_positions", [])
-    bankroll = state.get("bankroll", 50.0) 
+    bankroll = state.get("bankroll", DEFAULT_BANKROLL) 
     
     ev_values, position_sizes, trade_sides = {}, {}, {}
     
@@ -370,8 +378,9 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
             if ev > 0.05:
                 b = (1.0 - price_yes) / price_yes
                 f_star = (b * p_model - (1 - p_model)) / b
-                size_usdc = f_star * 0.125 * bankroll
-                final_size = max(0, min(size_usdc, bankroll * 0.15, 8.0))
+                size_usdc = f_star * KELLY_FRACTION * bankroll
+                # Dynamic Scaling: Allow sizes to scale with bankroll, capped at 20%
+                final_size = max(0, min(size_usdc, bankroll * MAX_POSITION_SIZE_PCT))
                 
                 if final_size > 0.5:
                     ev_values[m_id] = round(ev, 4)
@@ -397,7 +406,7 @@ def risk_guardian_agent(state: AgentState) -> Dict[str, Any]:
     
     risk_flags = state.get("risk_flags", [])
     pause_flag = False
-    bankroll = state.get("bankroll", 50.0)
+    bankroll = state.get("bankroll", DEFAULT_BANKROLL)
     
     try:
         poly = pmxt.polymarket()
@@ -569,7 +578,7 @@ def run_agent_loop(is_paused: bool = False) -> bool:
         "current_markets": [], "weather_forecasts": {}, "probabilities": {},
         "edge_deltas": {}, "ev_values": {}, "position_sizes": {}, "trade_sides": {},
         "risk_flags": [], "human_approval": False, "cycle_logs": [], "pause_flag": False,
-        "total_exposure": 0.0, "api_weights": {}, "open_positions": [], "bankroll": 50.0
+        "total_exposure": 0.0, "api_weights": {}, "open_positions": [], "bankroll": DEFAULT_BANKROLL
     }
     
     try:
@@ -578,7 +587,7 @@ def run_agent_loop(is_paused: bool = False) -> bool:
             print(f" - {log}")
         
         # Update bankroll history
-        db.update_bankroll(final_state.get("bankroll", 50.0), final_state.get("bankroll", 50.0))
+        db.update_bankroll(final_state.get("bankroll", DEFAULT_BANKROLL), final_state.get("bankroll", DEFAULT_BANKROLL))
         return final_state.get("pause_flag", False)
 
     except Exception as e:
