@@ -185,7 +185,8 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
                 market_details = {
                     "id": m.get('id'),
                     "question": m.get('question'),
-                    "current_odds": m.get('tokens', [{}])[0].get('price', 0.5), 
+                    "price_yes": float(m.get('tokens', [{}, {}])[0].get('price', 0.5)),
+                    "price_no": float(m.get('tokens', [{}, {}])[1].get('price', 0.5)),
                     "liquidity": m.get('liquidity', 0),
                     "yes_token_id": m.get('tokens', [{}, {}])[0].get('token_id'),
                     "no_token_id": m.get('tokens', [{}, {}])[1].get('token_id'),
@@ -193,7 +194,8 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
                     "station_id": station_id,
                     "lat": market_lat,
                     "lon": market_lon,
-                    "tz": CITY_COORDS[city_key]["tz"]
+                    "tz": CITY_COORDS[city_key]["tz"],
+                    "resolution_time": m.get('end_date_iso')
                 }
                 
                 weather_markets.append(market_details)
@@ -328,8 +330,8 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
         
         db.save_prior(m_id, float(p_model))
         
-        # 5. Edge Detection
-        price_yes = market.get("current_odds", 0.5)
+        # 5. Edge Detection (Initial Delta vs YES for logging)
+        price_yes = market.get("price_yes", 0.5)
         p_market = price_yes
         
         delta = p_model - p_market
@@ -390,28 +392,52 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
                 trade_sides[f"EXIT_{m_id}"] = f"sell_{pos.get('side', 'yes')}"
                 position_sizes[f"EXIT_{m_id}"] = pos.get('size', 0)
 
-    # 3. New Trade Identification & Kelly Sizing (Compounding)
+    # 3. Symbiotic Arb: Dual-Token Price Comparison
     for market in markets:
         m_id = market["id"]
         if m_id in probs:
-            p_model = probs[m_id]
-            price_yes = market.get("current_odds", 0.5)
+            p_yes_model = probs[m_id]
+            p_no_model = 1.0 - p_yes_model
             
-            # EV Calculation
-            ev = (p_model * (1 - price_yes)) - ((1 - p_model) * price_yes)
+            price_yes = market.get("price_yes", 0.5)
+            price_no = market.get("price_no", 0.5)
             
-            if ev > 0.05:
-                b = (1.0 - price_yes) / price_yes
-                f_star = (b * p_model - (1 - p_model)) / b
-                size_usdc = f_star * KELLY_FRACTION * bankroll
-                # Dynamic Scaling: Allow sizes to scale with bankroll, capped at 20%
-                final_size = max(0, min(size_usdc, bankroll * MAX_POSITION_SIZE_PCT))
-                
-                if final_size > 0.5:
-                    ev_values[m_id] = round(ev, 4)
-                    position_sizes[m_id] = round(final_size, 4)
-                    trade_sides[m_id] = "buy_yes" if p_model > price_yes else "buy_no"
-                    print(f" -> Approved: {m_id} | EV: {ev:.2f} | Size: {final_size:.2f}")
+            # Mathematical Yield (EV) for both sides
+            # EV = (WinProb * Profit) - (LossProb * Loss)
+            # Profit on $1 is (1/Price - 1). Loss is $1.
+            # Simplified EV per $1: (WinProb / Price) - 1
+            ev_yes = (p_yes_model / price_yes) - 1 if price_yes > 0 else -1
+            ev_no = (p_no_model / price_no) - 1 if price_no > 0 else -1
+            
+            # Select the side with higher positive yield
+            if ev_yes > ev_no and ev_yes > 0.05:
+                best_ev = ev_yes
+                side = "buy_yes"
+                p_win = p_yes_model
+                price_entry = price_yes
+            elif ev_no > ev_yes and ev_no > 0.05:
+                best_ev = ev_no
+                side = "buy_no"
+                p_win = p_no_model
+                price_entry = price_no
+            else:
+                continue # No edge on either side
+
+            # Kelly Sizing for the chosen side
+            # f* = (bp - q) / b  where b is odds-1, p is win prob, q is loss prob
+            # b = (1/price) - 1
+            b = (1.0 / price_entry) - 1
+            f_star = (b * p_win - (1 - p_win)) / b if b > 0 else 0
+            
+            size_usdc = f_star * KELLY_FRACTION * bankroll
+            # Dynamic Scaling: Allow sizes to scale with bankroll, capped at 20%
+            final_size = max(0, min(size_usdc, bankroll * MAX_POSITION_SIZE_PCT))
+            
+            if final_size > 0.5:
+                ev_values[m_id] = round(best_ev, 4)
+                position_sizes[m_id] = round(final_size, 4)
+                trade_sides[m_id] = side
+                print(f" -> Approved Symbiotic Arb: {m_id} | Side: {side} | EV: {best_ev:.2f} | Size: {final_size:.2f}")
 
     return {
         "ev_values": ev_values,
@@ -449,9 +475,25 @@ def risk_guardian_agent(state: AgentState) -> Dict[str, Any]:
                 total_vol = buy_vol + sell_vol
                 vpin = abs(buy_vol - sell_vol) / total_vol if total_vol > 0 else 0
                 
-                # SENSITIVITY TUNING: 0.5 threshold instead of 0.7 during 'toxic' periods
-                threshold = 0.5 if "hour_to_close" in m_id else 0.7 
+                # SENSITIVITY TUNING: 0.5 threshold instead of 0.7 during 'toxic' periods (final hour)
+                is_proximate = False
+                res_time_str = target_market.get("resolution_time")
+                if res_time_str:
+                    try:
+                        # Normalize ISO string for fromisoformat (handle 'Z')
+                        res_time_str = res_time_str.replace('Z', '+00:00')
+                        res_dt = datetime.fromisoformat(res_time_str)
+                        now = datetime.now(res_dt.tzinfo) if res_dt.tzinfo else datetime.now()
+                        
+                        time_to_close = (res_dt - now).total_seconds()
+                        if 0 < time_to_close < 3600: # Within 60 minutes
+                            is_proximate = True
+                            print(f" -> TOXIC PERIOD DETECTED: {target_market['id']} resolves in {time_to_close/60:.1f} mins. Tuning VPIN sensitivity.")
+                    except Exception as e:
+                        print(f" -> [WARN] Could not parse resolution_time: {e}")
                 
+                threshold = 0.5 if is_proximate else 0.7 
+                                
                 if vpin > threshold:
                     risk_flags.append("VPIN_KILL_SWITCH")
                     send_telegram_msg(f"🚨 *KILL SWITCH*: VPIN {vpin:.2f} > {threshold}. Halting.")
@@ -516,7 +558,7 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
             
             # Fallback if book is empty
             if not bids or not asks:
-                mkt_price = market.get("current_odds", 0.5)
+                mkt_price = market.get("price_yes" if is_yes else "price_no", 0.5)
                 limit_price = round(mkt_price - 0.01 if order_side == "buy" else mkt_price + 0.01, 3)
             else:
                 # Maker Price Logic: Aggressive maker (1 tick better than best)
