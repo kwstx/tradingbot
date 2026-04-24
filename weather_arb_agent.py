@@ -317,29 +317,47 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
     """
     Decision Node:
     Applies Expected Value (EV), Kelly sizing, and Early Exit logic.
+    Implemented 'Capital Recycler' to boost velocity when high-edge trades (10%+) exist.
     """
     print("[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...")
     
     probs = state["probabilities"]
+    edge_deltas = state.get("edge_deltas", {})
     markets = state.get("current_markets", [])
     open_positions = state.get("open_positions", [])
     bankroll = state.get("bankroll", 50.0) 
     
     ev_values, position_sizes, trade_sides = {}, {}, {}
     
-    # 1. Early Exit Logic (Capital Recycling)
+    # 1. Identify High-Edge Opportunities (Capital Recycler trigger)
+    # We look for ANY market where the edge is > 10% to prioritize capital velocity
+    high_edge_available = any(abs(delta) > 0.10 for delta in edge_deltas.values())
+    
+    # 2. Early Exit & Capital Recycler Logic
     for pos in open_positions:
         m_id = pos.get('market_id')
         if m_id in probs:
             p_model = probs[m_id]
             current_price = pos.get('current_price', 0.5)
-            # If price reached model expectation (within 1.5%), exit to recycle capital
-            if abs(p_model - current_price) < 0.015:
-                print(f" -> EARLY EXIT triggered for {m_id}")
-                trade_sides[f"EXIT_{m_id}"] = "sell"
+            
+            # Logic: If price is within $0.05 of our model value, and we have >$0.90 locked,
+            # or if we're within 1.5% and just want to take profit.
+            near_target = abs(p_model - current_price) < 0.05
+            high_value_locked = current_price > 0.90
+            
+            # Trigger recycler if we have a great new trade waiting
+            if near_target and high_value_locked and high_edge_available:
+                print(f" -> VELOCITY RECYCLER: Selling {m_id} early to capture 10%+ edge elsewhere.")
+                trade_sides[f"EXIT_{m_id}"] = f"sell_{pos.get('side', 'yes')}" # Track side
+                position_sizes[f"EXIT_{m_id}"] = pos.get('size', 0)
+            
+            # Standard profit taking even without high-edge elsewhere
+            elif abs(p_model - current_price) < 0.015:
+                print(f" -> PROFIT TAKING: Early exit for {m_id} (Target reached).")
+                trade_sides[f"EXIT_{m_id}"] = f"sell_{pos.get('side', 'yes')}"
                 position_sizes[f"EXIT_{m_id}"] = pos.get('size', 0)
 
-    # 2. New Trade Identification & Kelly Sizing (Compounding)
+    # 3. New Trade Identification & Kelly Sizing (Compounding)
     for market in markets:
         m_id = market["id"]
         if m_id in probs:
@@ -368,6 +386,7 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
         "human_approval": True, 
         "cycle_logs": state.get("cycle_logs", []) + [f"Decision: {len(position_sizes)} trades/exits."]
     }
+
 
 def risk_guardian_agent(state: AgentState) -> Dict[str, Any]:
     """
@@ -450,7 +469,11 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
             if not market: continue
             
             side_type = trade_sides.get(m_id)
-            token_id = market["yes_token_id"] if "yes" in str(side_type) else market["no_token_id"]
+            
+            # Refined Token and Side Selection
+            is_yes = "yes" in str(side_type).lower()
+            token_id = market["yes_token_id"] if is_yes else market["no_token_id"]
+            order_side = "sell" if "sell" in str(side_type).lower() else "buy"
             
             # 1. Fetch Orderbook for Maker price
             ob = poly.fetch_order_book(real_m_id)
@@ -460,12 +483,11 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
             if not bids or not asks: continue
             
             # Maker Price Logic: Aggressive maker (1 tick better than best)
-            if "buy" in str(side_type):
+            if order_side == "buy":
                 limit_price = bids[0][0] + 0.001
-                order_side = "buy"
             else:
                 limit_price = asks[0][0] - 0.001
-                order_side = "sell"
+
 
             if SIMULATION_MODE:
                 print(f" -> [SIMULATION] Maker Order: {real_m_id} | {order_side} | Price: {limit_price}")
