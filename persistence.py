@@ -40,6 +40,19 @@ def init_db():
             last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS api_weights (
+            api_name TEXT PRIMARY KEY,
+            weight REAL DEFAULT 1.0,
+            last_error REAL DEFAULT 0.0,
+            last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # Initialize default weights for known providers
+    cursor.execute("INSERT OR IGNORE INTO api_weights (api_name, weight) VALUES ('open_meteo', 1.0)")
+    cursor.execute("INSERT OR IGNORE INTO api_weights (api_name, weight) VALUES ('noaa', 1.2)") # NOAA weight slightly higher in US
     
     conn.commit()
     conn.close()
@@ -92,6 +105,35 @@ class PersistenceManager:
                 prior_prob = excluded.prior_prob,
                 last_updated = CURRENT_TIMESTAMP
         ''', (market_id, prob))
+        conn.commit()
+        conn.close()
+
+    def get_api_weights(self) -> Dict[str, float]:
+        """Retrieves performance-based weights for all weather APIs."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('SELECT api_name, weight FROM api_weights')
+        rows = cursor.fetchall()
+        conn.close()
+        return {row[0]: row[1] for row in rows}
+
+    def update_api_performance(self, api_name, error_val):
+        """Updates the weight based on the recent prediction error (inverse proportionality)."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        # Simple adjustment: new_weight = current_weight * (1 - error_rate) or similar
+        # Here we just log the error and let the agent calculate weights if needed, 
+        # or we update weight directly.
+        cursor.execute('''
+            UPDATE api_weights 
+            SET weight = CASE 
+                WHEN ? < 0.1 THEN weight * 1.05 
+                ELSE weight * (1.0 - (? / 100.0)) 
+            END,
+            last_error = ?,
+            last_updated = CURRENT_TIMESTAMP
+            WHERE api_name = ?
+        ''', (error_val, error_val, error_val, api_name))
         conn.commit()
         conn.close()
 
