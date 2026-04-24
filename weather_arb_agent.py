@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 import httpx
 import concurrent.futures
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # PMXT and LangGraph imports
 try:
@@ -31,6 +31,7 @@ except ImportError:
 
 from persistence import PersistenceManager
 from source_scraper import ResolutionSourceScraper
+from reliability import ReliabilityManager
 
 load_dotenv()
 
@@ -274,16 +275,40 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
 
         # 2. Weighted Ensemble Calculation
         city_data = forecasts.get(m_id, {})
-        om_temps = city_data.get("open_meteo", {}).get("hourly", {}).get("temperature_2m", [])
+        om_data = city_data.get("open_meteo", {})
+        noaa_data = city_data.get("noaa", {})
         
-        # Calculate ensemble mu and sigma
+        # Target Date Extraction (Fallback to tomorrow if not found)
+        target_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+        date_match = re.search(r'(\d{4}-\d{2}-\d{2})', question)
+        if date_match:
+            target_date = date_match.group(1)
+
         samples = []
-        if om_temps:
-            w = api_weights.get("open_meteo", 1.0)
-            samples.extend([t for t in om_temps[:24]] * int(w * 10))
+        # Process individual API forecasts for history and ensemble
+        for api_name, data in [("open_meteo", om_data), ("noaa", noaa_data)]:
+            if not data: continue
             
+            api_temps = []
+            if api_name == "open_meteo":
+                api_temps = data.get("hourly", {}).get("temperature_2m", [])[:24]
+            elif api_name == "noaa":
+                # Extract temperatures from NOAA periods
+                api_temps = [p.get("temperature") for p in data.get("properties", {}).get("periods", []) if p.get("temperature") is not None][:12]
+            
+            if api_temps:
+                api_mu = np.mean(api_temps)
+                api_sigma = np.std(api_temps) if len(api_temps) > 1 else 1.0
+                
+                # Save to History for Reliability Tracking
+                db.save_forecast(m_id, api_name, float(api_mu), float(api_sigma), target_date, market["lat"], market["lon"])
+                
+                # Add to ensemble samples
+                w = api_weights.get(api_name, 1.0)
+                samples.extend(api_temps * int(w * 10))
+
         if not samples:
-            print(f" -> Skipping {m_id}: No ensemble data for {city}")
+            print(f" -> Skipping {m_id}: No ensemble data available.")
             continue
 
         mu = np.mean(samples)
@@ -618,8 +643,17 @@ if __name__ == "__main__":
     POLL_INTERVAL = 60 
     system_paused = False
     
+    # Schedule Reliability Backtest Loop every 6 hours
+    schedule.every(6).hours.do(ReliabilityManager.run_backtest_loop)
+    
+    # Run once at startup
+    ReliabilityManager.run_backtest_loop()
+
     while True:
         try:
+            # Run scheduled tasks
+            schedule.run_pending()
+            
             system_paused = run_agent_loop(system_paused)
         except KeyboardInterrupt:
             break

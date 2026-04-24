@@ -49,6 +49,22 @@ def init_db():
             last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS forecast_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            market_id TEXT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            api_name TEXT,
+            forecast_mu REAL,
+            forecast_sigma REAL,
+            target_date TEXT,
+            lat REAL,
+            lon REAL,
+            actual_value REAL DEFAULT NULL,
+            error REAL DEFAULT NULL
+        )
+    ''')
     
     # Initialize default weights for known providers
     cursor.execute("INSERT OR IGNORE INTO api_weights (api_name, weight) VALUES ('open_meteo', 1.0)")
@@ -60,8 +76,7 @@ def init_db():
 class PersistenceManager:
     def __init__(self, db_path=DB_PATH):
         self.db_path = db_path
-        if not os.path.exists(self.db_path):
-            init_db()
+        init_db()
 
     def log_trade(self, market_id, side, size, price, status):
         """Logs a trade to the database."""
@@ -127,8 +142,9 @@ class PersistenceManager:
         cursor.execute('''
             UPDATE api_weights 
             SET weight = CASE 
-                WHEN ? < 0.1 THEN weight * 1.05 
-                ELSE weight * (1.0 - (? / 100.0)) 
+                WHEN ? < 0.5 THEN weight * 1.02 
+                WHEN ? > 2.0 THEN weight * 0.98
+                ELSE weight 
             END,
             last_error = ?,
             last_updated = CURRENT_TIMESTAMP
@@ -136,6 +152,56 @@ class PersistenceManager:
         ''', (error_val, error_val, error_val, api_name))
         conn.commit()
         conn.close()
+
+    def save_forecast(self, market_id, api_name, mu, sigma, target_date, lat, lon):
+        """Saves a forecast to the history for later backtesting."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO forecast_history (market_id, api_name, forecast_mu, forecast_sigma, target_date, lat, lon)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (market_id, api_name, mu, sigma, target_date, lat, lon))
+        conn.commit()
+        conn.close()
+
+    def get_unresolved_forecasts(self):
+        """Retrieves forecasts that haven't been resolved yet."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT id, market_id, api_name, target_date, forecast_mu, lat, lon FROM forecast_history 
+            WHERE actual_value IS NULL
+        ''')
+        rows = cursor.fetchall()
+        conn.close()
+        return rows
+
+    def resolve_forecast(self, forecast_id, actual_value):
+        """Updates a forecast with its actual outcome and calculates the error."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        # Fetch the forecast mu to calculate error
+        cursor.execute("SELECT forecast_mu, api_name FROM forecast_history WHERE id = ?", (forecast_id,))
+        row = cursor.fetchone()
+        if not row:
+            conn.close()
+            return
+            
+        mu, api_name = row
+        error = abs(mu - actual_value)
+        
+        cursor.execute('''
+            UPDATE forecast_history 
+            SET actual_value = ?, error = ?
+            WHERE id = ?
+        ''', (actual_value, error, forecast_id))
+        
+        conn.commit()
+        conn.close()
+        
+        # Also update the api weight based on this error
+        self.update_api_performance(api_name, error)
 
     def get_daily_summary(self):
         """Generates a summary for the last 24 hours."""
