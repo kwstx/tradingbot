@@ -484,33 +484,48 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
             token_id = market["yes_token_id"] if is_yes else market["no_token_id"]
             order_side = "sell" if "sell" in str(side_type).lower() else "buy"
             
-            # 1. Fetch Orderbook for Maker price
-            ob = poly.fetch_order_book(real_m_id)
+            # 1. Fetch Orderbook for Maker price (using specific token_id for precision)
+            ob = poly.fetch_order_book(token_id)
             bids = ob.get('bids', [])
             asks = ob.get('asks', [])
             
-            if not bids or not asks: continue
-            
-            # Maker Price Logic: Aggressive maker (1 tick better than best)
-            if order_side == "buy":
-                limit_price = bids[0][0] + 0.001
+            # Fallback if book is empty
+            if not bids or not asks:
+                mkt_price = market.get("current_odds", 0.5)
+                limit_price = round(mkt_price - 0.01 if order_side == "buy" else mkt_price + 0.01, 3)
             else:
-                limit_price = asks[0][0] - 0.001
+                # Maker Price Logic: Aggressive maker (1 tick better than best)
+                # Ensure we don't cross the spread (post_only would fail anyway)
+                best_bid = float(bids[0][0])
+                best_ask = float(asks[0][0])
+                
+                if order_side == "buy":
+                    # Place at best_bid + 0.001, but capped at best_ask - 0.001 to ensure maker status
+                    limit_price = min(best_bid + 0.001, best_ask - 0.001)
+                else:
+                    # Place at best_ask - 0.001, but floor at best_bid + 0.001
+                    limit_price = max(best_ask - 0.001, best_bid + 0.001)
 
+            # 2. Boundary and Precision Check
+            limit_price = round(max(0.005, min(0.995, limit_price)), 3)
 
             if SIMULATION_MODE:
-                print(f" -> [SIMULATION] Maker Order: {real_m_id} | {order_side} | Price: {limit_price}")
+                print(f" -> [SIMULATION] Maker Order: {real_m_id} ({'YES' if is_yes else 'NO'}) | {order_side} | Price: {limit_price}")
                 executed_trades.append({"market": real_m_id, "side": order_side, "size": size, "price": limit_price, "status": "simulation"})
             else:
-                order = poly.create_order(
-                    token_id=token_id,
-                    side=order_side,
-                    size=size,
-                    price=limit_price,
-                    post_only=True # ENSURE MAKER ONLY
-                )
-                executed_trades.append({"market": real_m_id, "side": order_side, "size": size, "price": limit_price, "status": order.get('status')})
-                db.log_trade(real_m_id, order_side, size, limit_price, order.get('status'))
+                try:
+                    order = poly.create_order(
+                        token_id=token_id,
+                        side=order_side,
+                        size=size,
+                        price=limit_price,
+                        post_only=True # ENSURE MAKER ONLY
+                    )
+                    status = order.get('status', 'unknown')
+                    executed_trades.append({"market": real_m_id, "side": order_side, "size": size, "price": limit_price, "status": status})
+                    db.log_trade(real_m_id, order_side, size, limit_price, status)
+                except Exception as e:
+                    print(f" -> [FAIL] Maker order failed for {real_m_id}: {e}")
 
         # Notify via Telegram
         if executed_trades:
