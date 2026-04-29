@@ -1,0 +1,2758 @@
+--------------------------------------------------
+Weather Arbitrage Autonomous AI Agent v2.0 (High Velocity)
+Mode: PAPER TRADING
+--------------------------------------------------
+
+[RELIABILITY] Starting Historical Forecast Backtest Loop...
+ -> Found 140 forecasts awaiting resolution.
+[RELIABILITY] Resolving Paper Trades...
+ -> Found 42 unresolved paper trades.
+[RELIABILITY] Backtest cycle complete. Resolved 0 forecasts.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:05:29
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $4.69 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.28 | Edge: +0.72
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.16 | Edge: +0.84
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.75 | Edge: +0.25
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+ -> Approved Symbiotic Arb: 2071161 | Side: buy_yes | EV: 2.51 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071163 | Side: buy_yes | EV: 3.05 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071165 | Side: buy_yes | EV: 5.15 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071160 | Side: buy_yes | EV: 0.33 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071162 | Side: buy_yes | EV: 2.40 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071164 | Side: buy_yes | EV: 24.32 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071166 | Side: buy_yes | EV: 399.00 | Size: 0.59
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ -> [PAPER] Maker Order: 2071161 (YES) | buy | Price: 0.061 | Latency: 0.67s
+ -> [PAPER] Maker Order: 2071163 (YES) | buy | Price: 0.021 | Latency: 0.36s
+ -> [PAPER] Maker Order: 2071165 (YES) | buy | Price: 0.011 | Latency: 0.61s
+ -> [PAPER] Maker Order: 2071160 (YES) | buy | Price: 0.581 | Latency: 0.32s
+ -> [PAPER] Maker Order: 2071162 (YES) | buy | Price: 0.038 | Latency: 0.58s
+ -> [PAPER] Maker Order: 2071164 (YES) | buy | Price: 0.011 | Latency: 0.48s
+ -> [PAPER] Maker Order: 2071166 (YES) | buy | Price: 0.005 | Latency: 0.37s
+ - Supervisor: Cycle initialized at 2026-04-29 13:05:29.
+ - Researcher: 7 markets. Bankroll: $4.687199999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 7 trades/exits.
+ - RiskGuardian: Checks complete. Flags: ['MAX_EXPOSURE_REACHED']
+ - Executor: 7 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:06:52
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $4.69 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.28 | Edge: +0.72
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.16 | Edge: +0.84
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.75 | Edge: +0.25
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+ -> Approved Symbiotic Arb: 2071161 | Side: buy_yes | EV: 2.51 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071163 | Side: buy_yes | EV: 3.05 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071165 | Side: buy_yes | EV: 5.15 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071160 | Side: buy_yes | EV: 0.33 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071162 | Side: buy_yes | EV: 2.40 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071164 | Side: buy_yes | EV: 24.32 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071166 | Side: buy_yes | EV: 399.00 | Size: 0.59
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ -> [PAPER] Maker Order: 2071161 (YES) | buy | Price: 0.061 | Latency: 0.67s
+ -> [PAPER] Maker Order: 2071163 (YES) | buy | Price: 0.021 | Latency: 0.42s
+ -> [PAPER] Maker Order: 2071165 (YES) | buy | Price: 0.011 | Latency: 0.56s
+ -> [PAPER] Maker Order: 2071160 (YES) | buy | Price: 0.581 | Latency: 0.79s
+ -> [PAPER] Maker Order: 2071162 (YES) | buy | Price: 0.038 | Latency: 0.74s
+ -> [PAPER] Maker Order: 2071164 (YES) | buy | Price: 0.011 | Latency: 0.70s
+ -> [PAPER] Maker Order: 2071166 (YES) | buy | Price: 0.005 | Latency: 0.45s
+ - Supervisor: Cycle initialized at 2026-04-29 13:06:52.
+ - Researcher: 7 markets. Bankroll: $4.687199999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 7 trades/exits.
+ - RiskGuardian: Checks complete. Flags: ['MAX_EXPOSURE_REACHED']
+ - Executor: 7 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:08:13
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $4.69 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.28 | Edge: +0.72
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.16 | Edge: +0.84
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.75 | Edge: +0.25
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+ -> Approved Symbiotic Arb: 2071161 | Side: buy_yes | EV: 2.51 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071163 | Side: buy_yes | EV: 3.05 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071165 | Side: buy_yes | EV: 5.19 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071160 | Side: buy_yes | EV: 0.33 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071162 | Side: buy_yes | EV: 2.40 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071164 | Side: buy_yes | EV: 24.32 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071166 | Side: buy_yes | EV: 399.00 | Size: 0.59
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ -> [PAPER] Maker Order: 2071161 (YES) | buy | Price: 0.061 | Latency: 0.54s
+ -> [PAPER] Maker Order: 2071163 (YES) | buy | Price: 0.021 | Latency: 0.48s
+ -> [PAPER] Maker Order: 2071165 (YES) | buy | Price: 0.011 | Latency: 0.46s
+ -> [PAPER] Maker Order: 2071160 (YES) | buy | Price: 0.581 | Latency: 0.32s
+ -> [PAPER] Maker Order: 2071162 (YES) | buy | Price: 0.038 | Latency: 0.58s
+ -> [PAPER] Maker Order: 2071164 (YES) | buy | Price: 0.011 | Latency: 0.36s
+ -> [PAPER] Maker Order: 2071166 (YES) | buy | Price: 0.005 | Latency: 0.60s
+ - Supervisor: Cycle initialized at 2026-04-29 13:08:13.
+ - Researcher: 7 markets. Bankroll: $4.687199999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 7 trades/exits.
+ - RiskGuardian: Checks complete. Flags: ['MAX_EXPOSURE_REACHED']
+ - Executor: 7 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:10:15
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $4.69 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.28 | Edge: +0.72
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.16 | Edge: +0.84
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.75 | Edge: +0.25
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+ -> Approved Symbiotic Arb: 2071161 | Side: buy_yes | EV: 2.51 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071163 | Side: buy_yes | EV: 3.05 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071165 | Side: buy_yes | EV: 5.19 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071160 | Side: buy_yes | EV: 0.33 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071162 | Side: buy_yes | EV: 2.40 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071164 | Side: buy_yes | EV: 24.32 | Size: 0.59
+ -> Approved Symbiotic Arb: 2071166 | Side: buy_yes | EV: 399.00 | Size: 0.59
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ -> [PAPER] Maker Order: 2071161 (YES) | buy | Price: 0.021 | Latency: 0.45s
+ -> [PAPER] Maker Order: 2071163 (YES) | buy | Price: 0.021 | Latency: 0.44s
+ -> [PAPER] Maker Order: 2071165 (YES) | buy | Price: 0.011 | Latency: 0.24s
+ -> [PAPER] Maker Order: 2071160 (YES) | buy | Price: 0.581 | Latency: 0.72s
+ -> [PAPER] Maker Order: 2071162 (YES) | buy | Price: 0.038 | Latency: 0.59s
+ -> [PAPER] Maker Order: 2071164 (YES) | buy | Price: 0.011 | Latency: 0.34s
+ -> [PAPER] Maker Order: 2071166 (YES) | buy | Price: 0.005 | Latency: 0.72s
+ - Supervisor: Cycle initialized at 2026-04-29 13:10:15.
+ - Researcher: 7 markets. Bankroll: $4.687199999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 7 trades/exits.
+ - RiskGuardian: Checks complete. Flags: ['MAX_EXPOSURE_REACHED']
+ - Executor: 7 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:11:34
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.28 | Edge: +0.72
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.16 | Edge: +0.84
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.75 | Edge: +0.25
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:11:34.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:12:46
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.28 | Edge: +0.72
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.16 | Edge: +0.84
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.75 | Edge: +0.25
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:12:46.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:44:19
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.16 | Edge: +0.84
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:44:19.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:45:39
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.16 | Edge: +0.84
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:45:39.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:46:50
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.16 | Edge: +0.84
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:46:50.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:48:00
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.16 | Edge: +0.84
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:48:00.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:49:14
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:49:14.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:50:26
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:50:26.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:52:16
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:52:16.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:53:29
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:53:29.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:54:39
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:54:39.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:55:51
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:55:51.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:57:02
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:57:02.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:58:13
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:58:13.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 13:59:30
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 13:59:30.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:00:40
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:00:40.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:01:53
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:01:53.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:03:05
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:03:05.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:04:17
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:04:17.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:05:29
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.29 | Edge: +0.71
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:05:29.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:06:41
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.49 | Edge: +0.51
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:06:41.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:07:53
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.49 | Edge: +0.51
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:07:53.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:09:05
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.49 | Edge: +0.51
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:09:05.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:10:17
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.49 | Edge: +0.51
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:10:17.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:11:30
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.25 | Edge: +0.75
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.49 | Edge: +0.51
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:11:30.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:12:41
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.26 | Edge: +0.74
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.48 | Edge: +0.52
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:12:41.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:13:54
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.26 | Edge: +0.74
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.48 | Edge: +0.52
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:13:54.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:15:05
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.26 | Edge: +0.74
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.48 | Edge: +0.52
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:15:05.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:16:16
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.26 | Edge: +0.74
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.48 | Edge: +0.52
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:16:16.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:17:28
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.26 | Edge: +0.74
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.76 | Edge: +0.24
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.48 | Edge: +0.52
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:17:28.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:18:40
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:18:40.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:19:51
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:19:51.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:21:03
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:21:03.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:22:15
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:22:15.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:23:27
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:23:27.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:24:39
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:24:39.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:25:51
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:25:51.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:27:03
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:27:03.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:28:13
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:28:13.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:29:24
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:29:24.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:30:34
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:30:34.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:31:44
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:31:44.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:32:55
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:32:55.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:34:14
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:34:14.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:35:25
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:35:25.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:36:35
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:36:35.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:37:46
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:37:46.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:38:58
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.23 | Edge: +0.77
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:38:58.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:40:08
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:40:08.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:41:20
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:41:20.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:42:31
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:42:31.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:43:41
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:43:41.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:44:52
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.15 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:44:52.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:46:02
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:46:02.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:47:14
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:47:14.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:48:24
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:48:24.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:49:35
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:49:35.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:50:45
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.85
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:50:45.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:51:56
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:51:56.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:53:07
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:53:07.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:54:17
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:54:17.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 14:55:29
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.22 | Edge: +0.78
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.78 | Edge: +0.22
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 14:55:29.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:04:37
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:04:37.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:05:56
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:05:56.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:07:07
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:07:07.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:08:20
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:08:20.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:09:39
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:09:39.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:10:52
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:10:52.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:13:09
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:13:09.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:14:23
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:14:23.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:15:35
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:15:35.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:16:48
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:16:48.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:18:00
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:18:00.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:19:24
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:19:24.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:20:39
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:20:39.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:21:59
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:21:59.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:23:12
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:23:12.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:24:26
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:24:26.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:25:39
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:25:39.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:26:51
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:26:51.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:28:03
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:28:03.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:29:16
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:29:16.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:30:29
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:30:29.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:31:46
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:31:46.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:33:00
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:33:00.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:34:12
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:34:12.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:35:25
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:35:25.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:36:39
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:36:39.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:37:50
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:37:50.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:39:02
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:39:02.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:40:14
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:40:14.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:41:25
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:41:25.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:42:38
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:42:38.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 15:43:54
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.04 | Edge: +0.96
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 15:43:54.
+ - Researcher: 7 markets. Bankroll: $1.757699999999999.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 16:19:27
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $1.76 USDC
+[CRITICAL ERROR] Researcher node failed: getaddrinfo ENOENT gamma-api.polymarket.com
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+[EXECUTOR] Executing maker-only limit orders...
+ - Supervisor: Cycle initialized at 2026-04-29 16:19:27.
+ - Researcher error: getaddrinfo ENOENT gamma-api.polymarket.com
+ - Analyst: Refined 0 probabilities.
+ - Decision: 0 trades/exits.
+ - RiskGuardian: Checks complete. Flags: []
+ - Executor: 0 maker orders dispatched.
+
+[RELIABILITY] Starting Historical Forecast Backtest Loop...
+ -> Found 1512 forecasts awaiting resolution.
+[RELIABILITY] Resolving Paper Trades...
+ -> Found 70 unresolved paper trades.
+[RELIABILITY] Backtest cycle complete. Resolved 0 forecasts.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 21:48:45
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $50.00 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.05 | Edge: +0.95
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.02 | Edge: +0.98
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+ -> Approved Symbiotic Arb: 2071161 | Side: buy_yes | EV: 6.14 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071163 | Side: buy_yes | EV: 3.16 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071165 | Side: buy_yes | EV: 13.39 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071160 | Side: buy_yes | EV: 0.31 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071162 | Side: buy_yes | EV: 17.35 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071164 | Side: buy_yes | EV: 49.00 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071166 | Side: buy_yes | EV: 399.00 | Size: 6.25
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ -> [PAPER] Maker Order: 2071161 (YES) | buy | Price: 0.051 | Latency: 0.69s
+ -> [PAPER] Maker Order: 2071163 (YES) | buy | Price: 0.012 | Latency: 0.38s
+ -> [PAPER] Maker Order: 2071165 (YES) | buy | Price: 0.005 | Latency: 0.25s
+ -> [PAPER] Maker Order: 2071160 (YES) | buy | Price: 0.611 | Latency: 0.58s
+ -> [PAPER] Maker Order: 2071162 (YES) | buy | Price: 0.011 | Latency: 0.29s
+ -> [PAPER] Maker Order: 2071164 (YES) | buy | Price: 0.006 | Latency: 0.61s
+ -> [PAPER] Maker Order: 2071166 (YES) | buy | Price: 0.005 | Latency: 0.67s
+ - Supervisor: Cycle initialized at 2026-04-29 21:48:45.
+ - Researcher: 7 markets. Bankroll: $50.0.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 7 trades/exits.
+ - RiskGuardian: Checks complete. Flags: ['MAX_EXPOSURE_REACHED']
+ - Executor: 7 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 21:50:10
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $50.00 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.14 | Edge: +0.86
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.24 | Edge: +0.76
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.07 | Edge: +0.93
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.77 | Edge: +0.23
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.05 | Edge: +0.95
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.02 | Edge: +0.98
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+ -> Approved Symbiotic Arb: 2071161 | Side: buy_yes | EV: 6.14 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071163 | Side: buy_yes | EV: 3.16 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071165 | Side: buy_yes | EV: 13.39 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071160 | Side: buy_yes | EV: 0.31 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071162 | Side: buy_yes | EV: 17.35 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071164 | Side: buy_yes | EV: 49.00 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071166 | Side: buy_yes | EV: 399.00 | Size: 6.25
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ -> [PAPER] Maker Order: 2071161 (YES) | buy | Price: 0.051 | Latency: 0.47s
+ -> [PAPER] Maker Order: 2071163 (YES) | buy | Price: 0.012 | Latency: 0.56s
+ -> [PAPER] Maker Order: 2071165 (YES) | buy | Price: 0.005 | Latency: 0.51s
+ -> [PAPER] Maker Order: 2071160 (YES) | buy | Price: 0.611 | Latency: 0.73s
+ -> [PAPER] Maker Order: 2071162 (YES) | buy | Price: 0.011 | Latency: 0.26s
+ -> [PAPER] Maker Order: 2071164 (YES) | buy | Price: 0.006 | Latency: 0.37s
+ -> [PAPER] Maker Order: 2071166 (YES) | buy | Price: 0.005 | Latency: 0.69s
+ - Supervisor: Cycle initialized at 2026-04-29 21:50:10.
+ - Researcher: 7 markets. Bankroll: $50.0.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 7 trades/exits.
+ - RiskGuardian: Checks complete. Flags: ['MAX_EXPOSURE_REACHED']
+ - Executor: 7 maker orders dispatched.
+
+============================================================
+AUTONOMOUS CYCLE START (v2.0): 2026-04-29 23:53:35
+============================================================
+
+[RESEARCHER] Fetching active weather markets, balance, and source rules...
+ -> Paper Bankroll: $50.00 USDC
+ -> Found 7 markets. Scanned rules for station IDs.
+[ANALYST] Running weighted ensemble models and Bayesian updates...
+ -> Market: 2071161 | Post: 1.00 | Mkt: 0.15 | Edge: +0.84
+ -> Market: 2071163 | Post: 1.00 | Mkt: 0.21 | Edge: +0.79
+ -> Market: 2071165 | Post: 1.00 | Mkt: 0.09 | Edge: +0.91
+ -> Market: 2071160 | Post: 1.00 | Mkt: 0.73 | Edge: +0.27
+ -> Market: 2071162 | Post: 1.00 | Mkt: 0.06 | Edge: +0.94
+ -> Market: 2071164 | Post: 1.00 | Mkt: 0.03 | Edge: +0.97
+ -> Market: 2071166 | Post: 1.00 | Mkt: 0.00 | Edge: +1.00
+[DECISION] Running EV filtering, Kelly sizing, and Early Exit check...
+ -> Approved Symbiotic Arb: 2071161 | Side: buy_yes | EV: 5.45 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071163 | Side: buy_yes | EV: 3.77 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071165 | Side: buy_yes | EV: 10.36 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071160 | Side: buy_yes | EV: 0.36 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071162 | Side: buy_yes | EV: 17.02 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071164 | Side: buy_yes | EV: 30.25 | Size: 6.25
+ -> Approved Symbiotic Arb: 2071166 | Side: buy_yes | EV: 399.00 | Size: 6.25
+[RISK GUARDIAN] Enforcing VPIN kill switch and exposure caps...
+ -> [WARN] Could not parse resolution_time: unconverted data remains:  00:00:00
+[EXECUTOR] Executing maker-only limit orders...
+ -> [PAPER] Maker Order: 2071161 (YES) | buy | Price: 0.061 | Latency: 0.26s
+ -> [PAPER] Maker Order: 2071163 (YES) | buy | Price: 0.054 | Latency: 0.40s
+ -> [PAPER] Maker Order: 2071165 (YES) | buy | Price: 0.005 | Latency: 0.54s
+ -> [PAPER] Maker Order: 2071160 (YES) | buy | Price: 0.641 | Latency: 0.40s
+ -> [PAPER] Maker Order: 2071162 (YES) | buy | Price: 0.013 | Latency: 0.74s
+ -> [PAPER] Maker Order: 2071164 (YES) | buy | Price: 0.005 | Latency: 0.25s
+ -> [PAPER] Maker Order: 2071166 (YES) | buy | Price: 0.005 | Latency: 0.80s
+ - Supervisor: Cycle initialized at 2026-04-29 23:53:35.
+ - Researcher: 7 markets. Bankroll: $50.0.
+ - Analyst: Refined 7 probabilities.
+ - Decision: 7 trades/exits.
+ - RiskGuardian: Checks complete. Flags: ['MAX_EXPOSURE_REACHED']
+ - Executor: 7 maker orders dispatched.

@@ -35,9 +35,10 @@ from reliability import ReliabilityManager
 
 load_dotenv()
 
-# --- Simulation Mode Flag ---
-SIMULATION_MODE = os.getenv("SIMULATION_MODE", "true").lower() == "true"
-HUMAN_APPROVAL_REQUIRED = os.getenv("HUMAN_APPROVAL_REQUIRED", "true").lower() == "true"
+# --- Simulation & Paper Trading Flags ---
+SIMULATION_MODE = os.getenv("SIMULATION_MODE", "false").lower() == "true"
+PAPER_TRADING_MODE = os.getenv("PAPER_TRADING_MODE", "true").lower() == "true"
+HUMAN_APPROVAL_REQUIRED = os.getenv("HUMAN_APPROVAL_REQUIRED", "false").lower() == "true"
 
 # Initialize Persistence
 db = PersistenceManager()
@@ -134,24 +135,34 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
     print("\n[RESEARCHER] Fetching active weather markets, balance, and source rules...")
     
     try:
-        poly = pmxt.polymarket() 
+        poly = pmxt.Polymarket() 
         
-        # 1. Fetch Live Bankroll (Dynamic Compounding)
-        usdc_bal = DEFAULT_BANKROLL 
-        try:
-            balance_info = poly.fetch_balance()
-            if isinstance(balance_info, list):
-                for asset in balance_info:
-                    if asset.get('symbol') == 'USDC':
-                        # Use 'free' for available balance or 'total' for compounding
-                        usdc_bal = float(asset.get('free', DEFAULT_BANKROLL))
-                        break
-            print(f" -> Active Bankroll: ${usdc_bal:.2f} USDC")
-        except Exception as e:
-            print(f" -> [WARN] Balance fetch failed: {e}. Using fallback.")
+        # 1. Fetch Bankroll (Paper vs Live)
+        if PAPER_TRADING_MODE:
+            usdc_bal = db.get_latest_bankroll(mode='PAPER', default=DEFAULT_BANKROLL)
+            print(f" -> Paper Bankroll: ${usdc_bal:.2f} USDC")
+        else:
+            usdc_bal = DEFAULT_BANKROLL 
+            try:
+                balance_info = poly.fetch_balance()
+                if isinstance(balance_info, list):
+                    for asset in balance_info:
+                        if asset.get('symbol') == 'USDC':
+                            usdc_bal = float(asset.get('free', DEFAULT_BANKROLL))
+                            break
+                print(f" -> Active Bankroll: ${usdc_bal:.2f} USDC")
+            except Exception as e:
+                print(f" -> [WARN] Balance fetch failed: {e}. Using fallback.")
 
         # 2. Fetch Open Positions (for Early Exit logic)
-        open_positions = poly.fetch_positions()
+        if PAPER_TRADING_MODE:
+            open_positions = []
+        else:
+            try:
+                open_positions = poly.fetch_positions()
+            except Exception as e:
+                print(f" -> [WARN] Position fetch failed: {e}. Using empty list.")
+                open_positions = []
 
         # 3. Fetch Weights from DB
         weights = db.get_api_weights()
@@ -162,44 +173,69 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
         unique_locations = set()
         
         for m in all_markets:
-            if m.get('active') and m.get('tokens') and m.get('liquidity'):
-                desc = m.get('description', '').lower()
-                rules = m.get('rules', '').lower()
+            # Handle both object-style (new PMXT) and dict-style (old PMXT)
+            try:
+                is_active = getattr(m, 'status', None) == 'active' or getattr(m, 'active', False)
+                has_liquidity = getattr(m, 'liquidity', 0) > 0
                 
-                city_key = "NYC"
-                for city in CITY_COORDS.keys():
-                    if city.upper() in m.get('question', '').upper():
-                        city_key = city
-                        break
-                
-                # NEW: Use Resolution Source Scraper for high-precision targeting
-                scraper_results = ResolutionSourceScraper.scrape(desc, rules)
-                station_id = scraper_results["station_id"]
-                
-                # Refine coordinates if a specific station was found
-                market_lat, market_lon = CITY_COORDS[city_key]["lat"], CITY_COORDS[city_key]["lon"]
-                if scraper_results["coordinates"]:
-                    market_lat, market_lon = scraper_results["coordinates"]
-                    print(f" -> REFINED COORDS: Using {station_id} coordinates for {city_key}")
+                if is_active and has_liquidity:
+                    question = getattr(m, 'question', getattr(m, 'title', ''))
+                    desc = getattr(m, 'description', '')
+                    
+                    # Extract prices and token IDs
+                    if hasattr(m, 'yes'):
+                        price_yes = getattr(m.yes, 'price', 0.5)
+                        price_no = getattr(m.no, 'price', 0.5)
+                        yes_token_id = getattr(m.yes, 'outcome_id', None)
+                        no_token_id = getattr(m.no, 'outcome_id', None)
+                    else:
+                        # Fallback for dict-style
+                        tokens = getattr(m, 'tokens', m.get('tokens', [{}, {}]) if hasattr(m, 'get') else [{}, {}])
+                        price_yes = float(tokens[0].get('price', 0.5)) if hasattr(tokens[0], 'get') else 0.5
+                        price_no = float(tokens[1].get('price', 0.5)) if hasattr(tokens[1], 'get') else 0.5
+                        yes_token_id = tokens[0].get('token_id') if hasattr(tokens[0], 'get') else None
+                        no_token_id = tokens[1].get('token_id') if hasattr(tokens[1], 'get') else None
+                    
+                    m_id = getattr(m, 'market_id', getattr(m, 'id', None))
+                    res_time = getattr(m, 'resolution_date', getattr(m, 'end_date_iso', None))
+                    
+                    city_key = "NYC"
+                    for city in CITY_COORDS.keys():
+                        if city.upper() in question.upper():
+                            city_key = city
+                            break
+                    
+                    # NEW: Use Resolution Source Scraper for high-precision targeting
+                    scraper_results = ResolutionSourceScraper.scrape(desc, "")
+                    station_id = scraper_results["station_id"]
+                    
+                    # Refine coordinates if a specific station was found
+                    market_lat, market_lon = CITY_COORDS[city_key]["lat"], CITY_COORDS[city_key]["lon"]
+                    if scraper_results["coordinates"]:
+                        market_lat, market_lon = scraper_results["coordinates"]
+                        print(f" -> REFINED COORDS: Using {station_id} coordinates for {city_key}")
 
-                market_details = {
-                    "id": m.get('id'),
-                    "question": m.get('question'),
-                    "price_yes": float(m.get('tokens', [{}, {}])[0].get('price', 0.5)),
-                    "price_no": float(m.get('tokens', [{}, {}])[1].get('price', 0.5)),
-                    "liquidity": m.get('liquidity', 0),
-                    "yes_token_id": m.get('tokens', [{}, {}])[0].get('token_id'),
-                    "no_token_id": m.get('tokens', [{}, {}])[1].get('token_id'),
-                    "city": city_key,
-                    "station_id": station_id,
-                    "lat": market_lat,
-                    "lon": market_lon,
-                    "tz": CITY_COORDS[city_key]["tz"],
-                    "resolution_time": m.get('end_date_iso')
-                }
-                
-                weather_markets.append(market_details)
-                unique_locations.add(city_key)
+                    market_details = {
+                        "id": m_id,
+                        "question": question,
+                        "price_yes": price_yes,
+                        "price_no": price_no,
+                        "liquidity": getattr(m, 'liquidity', 0),
+                        "yes_token_id": yes_token_id,
+                        "no_token_id": no_token_id,
+                        "city": city_key,
+                        "station_id": station_id,
+                        "lat": market_lat,
+                        "lon": market_lon,
+                        "tz": CITY_COORDS[city_key]["tz"],
+                        "resolution_time": res_time
+                    }
+                    
+                    weather_markets.append(market_details)
+                    unique_locations.add(city_key)
+            except Exception as e:
+                print(f" -> [WARN] Skipping market due to parse error: {e}")
+                continue
 
         print(f" -> Found {len(weather_markets)} markets. Scanned rules for station IDs.")
 
@@ -303,7 +339,9 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
                 api_sigma = np.std(api_temps) if len(api_temps) > 1 else 1.0
                 
                 # Save to History for Reliability Tracking
-                db.save_forecast(m_id, api_name, float(api_mu), float(api_sigma), target_date, market["lat"], market["lon"])
+                # Determine primary threshold for resolution
+                threshold = lower_bound if lower_bound != float('-inf') else upper_bound
+                db.save_forecast(m_id, api_name, float(api_mu), float(api_sigma), threshold, target_date, market["lat"], market["lon"])
                 
                 # Add to ensemble samples
                 w = api_weights.get(api_name, 1.0)
@@ -460,18 +498,18 @@ def risk_guardian_agent(state: AgentState) -> Dict[str, Any]:
     bankroll = state.get("bankroll", DEFAULT_BANKROLL)
     
     try:
-        poly = pmxt.polymarket()
+        poly = pmxt.Polymarket()
         
         # 1. VPIN Calculation with Sensitivity Tuning
         markets = state.get("current_markets", [])
         if markets:
             target_market = sorted(markets, key=lambda x: x.get('liquidity', 0), reverse=True)[0]
-            m_id = target_market["id"]
-            
-            trades = poly.fetch_trades(m_id)
-            if trades and len(trades) > 5:
-                buy_vol = sum(t['amount'] for t in trades if t['side'] == 'buy')
-                sell_vol = sum(t['amount'] for t in trades if t['side'] == 'sell')
+            token_id = target_market.get("yes_token_id")
+            trades = poly.fetch_trades(token_id)
+            if trades and len(trades) >= 10:
+                # Handle objects from new PMXT
+                buy_vol = sum(getattr(t, 'amount', 0) for t in trades if getattr(t, 'side', '') == 'buy')
+                sell_vol = sum(getattr(t, 'amount', 0) for t in trades if getattr(t, 'side', '') == 'sell')
                 total_vol = buy_vol + sell_vol
                 vpin = abs(buy_vol - sell_vol) / total_vol if total_vol > 0 else 0
                 
@@ -481,8 +519,12 @@ def risk_guardian_agent(state: AgentState) -> Dict[str, Any]:
                 if res_time_str:
                     try:
                         # Normalize ISO string for fromisoformat (handle 'Z')
-                        res_time_str = res_time_str.replace('Z', '+00:00')
-                        res_dt = datetime.fromisoformat(res_time_str)
+                        res_time_str = str(res_time_str).replace('Z', '+00:00')
+                        if 'T' in res_time_str:
+                            res_dt = datetime.fromisoformat(res_time_str)
+                        else:
+                            # Fallback for simple date strings
+                            res_dt = datetime.strptime(res_time_str.split('+')[0].strip(), "%Y-%m-%d")
                         now = datetime.now(res_dt.tzinfo) if res_dt.tzinfo else datetime.now()
                         
                         time_to_close = (res_dt - now).total_seconds()
@@ -492,9 +534,9 @@ def risk_guardian_agent(state: AgentState) -> Dict[str, Any]:
                     except Exception as e:
                         print(f" -> [WARN] Could not parse resolution_time: {e}")
                 
-                threshold = 0.5 if is_proximate else 0.7 
+                vpin_threshold = 0.6 if is_proximate else 0.95 
                                 
-                if vpin > threshold:
+                if vpin > vpin_threshold:
                     risk_flags.append("VPIN_KILL_SWITCH")
                     send_telegram_msg(f"🚨 *KILL SWITCH*: VPIN {vpin:.2f} > {threshold}. Halting.")
 
@@ -506,8 +548,14 @@ def risk_guardian_agent(state: AgentState) -> Dict[str, Any]:
 
         # 3. Kill-Switch Activation
         if risk_flags:
-            poly.cancel_all_orders()
-            pause_flag = True
+            # Only PAUSE the system for VPIN kill switch (critical market toxicity)
+            if "VPIN_KILL_SWITCH" in risk_flags:
+                if not PAPER_TRADING_MODE and not SIMULATION_MODE:
+                    try:
+                        poly.cancel_all_orders()
+                    except Exception as e:
+                        print(f" -> [ERROR] Failed to cancel orders: {e}")
+                pause_flag = True
             
         return {
             "risk_flags": risk_flags,
@@ -535,7 +583,7 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
     executed_trades = []
     
     try:
-        poly = pmxt.polymarket()
+        poly = pmxt.Polymarket()
         
         for m_id, size in pos_sizes.items():
             is_exit = m_id.startswith("EXIT_")
@@ -553,8 +601,9 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
             
             # 1. Fetch Orderbook for Maker price (using specific token_id for precision)
             ob = poly.fetch_order_book(token_id)
-            bids = ob.get('bids', [])
-            asks = ob.get('asks', [])
+            # Handle both object-style (new PMXT) and dict-style (old PMXT)
+            bids = getattr(ob, 'bids', [])
+            asks = getattr(ob, 'asks', [])
             
             # Fallback if book is empty
             if not bids or not asks:
@@ -563,8 +612,8 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
             else:
                 # Maker Price Logic: Aggressive maker (1 tick better than best)
                 # Ensure we don't cross the spread (post_only would fail anyway)
-                best_bid = float(bids[0][0])
-                best_ask = float(asks[0][0])
+                best_bid = float(getattr(bids[0], 'price', 0))
+                best_ask = float(getattr(asks[0], 'price', 0))
                 
                 if order_side == "buy":
                     # Place at best_bid + 0.001, but capped at best_ask - 0.001 to ensure maker status
@@ -576,7 +625,27 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
             # 2. Boundary and Precision Check
             limit_price = round(max(0.005, min(0.995, limit_price)), 3)
 
-            if SIMULATION_MODE:
+            if PAPER_TRADING_MODE:
+                # Simulate Latency (Forward Testing requirement)
+                latency = np.random.uniform(0.2, 0.8)
+                time.sleep(latency)
+                
+                print(f" -> [PAPER] Maker Order: {real_m_id} ({'YES' if is_yes else 'NO'}) | {order_side} | Price: {limit_price} | Latency: {latency:.2f}s")
+                
+                # Update Virtual Wallet (Deduct for buys, credit for sells - simplified)
+                current_bal = db.get_latest_bankroll(mode='PAPER', default=DEFAULT_BANKROLL)
+                if order_side == "buy":
+                    new_bal = current_bal - size
+                else: 
+                    # For selling in paper mode, we assume the full position value is returned for simplicity
+                    # or we just log it. Real P&L tracking would be more complex (needs resolutions).
+                    new_bal = current_bal + (size * limit_price) 
+                
+                db.update_bankroll(new_bal, new_bal, mode='PAPER')
+                db.log_trade(real_m_id, order_side, size, limit_price, "paper_executed", mode='PAPER')
+                executed_trades.append({"market": real_m_id, "side": order_side, "size": size, "price": limit_price, "status": "paper"})
+
+            elif SIMULATION_MODE:
                 print(f" -> [SIMULATION] Maker Order: {real_m_id} ({'YES' if is_yes else 'NO'}) | {order_side} | Price: {limit_price}")
                 executed_trades.append({"market": real_m_id, "side": order_side, "size": size, "price": limit_price, "status": "simulation"})
             else:
@@ -596,7 +665,8 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
 
         # Notify via Telegram
         if executed_trades:
-            msg = "✅ *TRADES EXECUTED (v2.0 Maker-Only)*\n"
+            prefix = "[PAPER] " if PAPER_TRADING_MODE else ""
+            msg = f"✅ {prefix}*TRADES EXECUTED (v2.0 Maker-Only)*\n"
             for t in executed_trades:
                 msg += f"- {t['market']}: {t['side']} {t['size']} USDC @ {t['price']} ({t['status']})\n"
             send_telegram_msg(msg)
@@ -626,8 +696,12 @@ def supervisor_node(state: AgentState) -> Dict[str, Any]:
 # --- Graph Construction ---
 
 def route_risk_assessment(state: AgentState) -> str:
-    if state.get("risk_flags"):
-        print("!!! HALT: Execution skipped due to Risk Flags !!!")
+    # Only block execution for critical kill switches
+    critical_flags = ["VPIN_KILL_SWITCH", "GUARDIAN_FETCH_ERROR"]
+    active_criticals = [f for f in state.get("risk_flags", []) if f in critical_flags]
+    
+    if active_criticals:
+        print(f"!!! HALT: Execution skipped due to Critical Risk Flags: {active_criticals} !!!")
         return "halt"
     return "proceed"
 
@@ -669,7 +743,8 @@ def run_agent_loop(is_paused: bool = False) -> bool:
             print(f" - {log}")
         
         # Update bankroll history
-        db.update_bankroll(final_state.get("bankroll", DEFAULT_BANKROLL), final_state.get("bankroll", DEFAULT_BANKROLL))
+        mode = 'PAPER' if PAPER_TRADING_MODE else 'LIVE'
+        db.update_bankroll(final_state.get("bankroll", DEFAULT_BANKROLL), final_state.get("bankroll", DEFAULT_BANKROLL), mode=mode)
         return final_state.get("pause_flag", False)
 
     except Exception as e:
@@ -679,7 +754,10 @@ def run_agent_loop(is_paused: bool = False) -> bool:
 if __name__ == "__main__":
     print("--------------------------------------------------")
     print("Weather Arbitrage Autonomous AI Agent v2.0 (High Velocity)")
-    print(f"Mode: {'SIMULATION' if SIMULATION_MODE else 'LIVE'}")
+    current_mode = 'LIVE'
+    if SIMULATION_MODE: current_mode = 'SIMULATION'
+    if PAPER_TRADING_MODE: current_mode = 'PAPER TRADING'
+    print(f"Mode: {current_mode}")
     print("--------------------------------------------------")
     
     POLL_INTERVAL = 60 

@@ -48,9 +48,10 @@ class ReliabilityManager:
         resolved_count = 0
         
         for f_id, m_id, api_name, target_date, mu, lat, lon in unresolved:
-            # Check if target_date has passed (we need at least 1 day after to have historical data)
+            # Check if target_date has passed (we need historical data availability)
             target_dt = datetime.strptime(target_date, "%Y-%m-%d")
-            if target_dt >= datetime.now() - timedelta(days=1):
+            # If target date was yesterday or older, we can usually resolve
+            if target_dt >= datetime.now().replace(hour=0, minute=0, second=0, microsecond=0):
                 continue
             
             actual = cls.fetch_actual_weather(lat, lon, target_date)
@@ -60,9 +61,48 @@ class ReliabilityManager:
                 resolved_count += 1
             
             # Rate limiting
-            time.sleep(1)
+            time.sleep(0.5)
+
+        # NEW: Resolve Paper Trades
+        cls.resolve_paper_trades()
 
         print(f"[RELIABILITY] Backtest cycle complete. Resolved {resolved_count} forecasts.")
+
+    @classmethod
+    def resolve_paper_trades(cls):
+        """
+        Processes paper trades, calculates PnL from resolved forecasts, and updates balance.
+        """
+        print("[RELIABILITY] Resolving Paper Trades...")
+        unresolved_trades = db.get_unresolved_paper_trades()
+        print(f" -> Found {len(unresolved_trades)} unresolved paper trades.")
+        
+        for t_id, m_id, side, size, price, target_date, threshold, lat, lon in unresolved_trades:
+            target_dt = datetime.strptime(target_date, "%Y-%m-%d")
+            # print(f" -> Checking Trade {t_id} (Target: {target_date})...")
+            if target_dt >= datetime.now().replace(hour=0, minute=0, second=0, microsecond=0):
+                continue
+                
+            actual = cls.fetch_actual_weather(lat, lon, target_date)
+            if actual is not None:
+                # Logic: Win if side matches the outcome
+                is_above = actual > threshold
+                is_yes = "yes" in side.lower()
+                won = (is_yes and is_above) or (not is_yes and not is_above)
+                
+                # PnL Calculation: 
+                # tokens = size / price
+                # if won: payout = tokens * 1.0; net_pnl = payout - size
+                # if lost: net_pnl = -size
+                tokens = size / price
+                if won:
+                    pnl = tokens - size
+                else:
+                    pnl = -size
+                
+                db.resolve_paper_trade(t_id, size, won, pnl)
+                res_str = "WON" if won else "LOST"
+                print(f" -> Paper Trade {t_id} Resolved: {res_str} | PnL: ${pnl:+.2f}")
 
 if __name__ == "__main__":
     ReliabilityManager.run_backtest_loop()
