@@ -45,8 +45,11 @@ db = PersistenceManager()
 
 # --- 0. Global Config ---
 DEFAULT_BANKROLL = 50.0
-MAX_POSITION_SIZE_PCT = 0.20 # Max 20% of bankroll per trade
-KELLY_FRACTION = 0.125      # Conservative Kelly (1/8th)
+MAX_POSITION_SIZE_PCT = 0.10 # Reduced from 0.20 for safety
+KELLY_FRACTION = 0.10      # Reduced from 0.125
+MAX_LIQUIDITY_TAKE_PCT = 0.15 # Never take more than 15% of top-level liquidity
+STALE_PRICE_THRESHOLD_MINS = 30 # Consider price stale if no trades in 30m
+MIN_TIME_TO_RESOLUTION_HOURS = 4 # Don't bet if resolution is too close (Data Leakage protection)
 
 # --- 1. Shared State Definition ---
 class AgentState(TypedDict):
@@ -199,6 +202,24 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
                     m_id = getattr(m, 'market_id', getattr(m, 'id', None))
                     res_time = getattr(m, 'resolution_date', getattr(m, 'end_date_iso', None))
                     
+                    # 1. Fetch Order Book Depth for Liquidity & Slippage
+                    try:
+                        # We use the yes_token_id for the primary liquidity check
+                        # In PMXT, token_ids are available on the market outcomes
+                        primary_token_id = yes_token_id if yes_token_id else (tokens[0].get('token_id') if tokens else None)
+                        if primary_token_id:
+                            ob = poly.fetch_order_book(primary_token_id)
+                            # Sum volume at top 3 levels for a more realistic liquidity picture
+                            bids = getattr(ob, 'bids', [])[:3]
+                            asks = getattr(ob, 'asks', [])[:3]
+                            bid_liquidity = sum(float(getattr(b, 'amount', 0)) for b in bids)
+                            ask_liquidity = sum(float(getattr(a, 'amount', 0)) for a in asks)
+                        else:
+                            bid_liquidity, ask_liquidity = 0, 0
+                    except Exception as e:
+                        print(f" -> [WARN] Liquidity fetch failed for {m_id}: {e}")
+                        bid_liquidity, ask_liquidity = 0, 0
+
                     city_key = "NYC"
                     for city in CITY_COORDS.keys():
                         if city.upper() in question.upper():
@@ -221,6 +242,8 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
                         "price_yes": price_yes,
                         "price_no": price_no,
                         "liquidity": getattr(m, 'liquidity', 0),
+                        "bid_liquidity": bid_liquidity,
+                        "ask_liquidity": ask_liquidity,
                         "yes_token_id": yes_token_id,
                         "no_token_id": no_token_id,
                         "city": city_key,
@@ -242,9 +265,6 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
         # 5. Fetch weather data (using specific station coordinates if available)
         weather_data_map = {}
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            # We now group by unique (lat, lon) to avoid redundant calls, 
-            # but map them back to the market-specific station if needed.
-            # For simplicity in this v2.1 update, we still map to the market ID or a compound key.
             unique_targets = {}
             for m in weather_markets:
                 target_key = f"{m['lat']}_{m['lon']}"
@@ -258,7 +278,11 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
             temp_weather_results = {}
             for future in concurrent.futures.as_completed(future_to_key):
                 key = future_to_key[future]
-                temp_weather_results[key] = future.result()
+                res = future.result()
+                # Add timestamp to weather data for freshness check
+                if res:
+                    res["fetched_at"] = datetime.now().isoformat()
+                temp_weather_results[key] = res
             
             # Map back to market-friendly format
             for m in weather_markets:
@@ -296,6 +320,20 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
         m_id = market["id"]
         question = market["question"]
         
+        # 0. Data Freshness & Leakage Protection
+        res_time_str = market.get("resolution_time")
+        if res_time_str:
+            try:
+                res_time_str = str(res_time_str).replace('Z', '+00:00')
+                res_dt = datetime.fromisoformat(res_time_str)
+                now = datetime.now(res_dt.tzinfo) if res_dt.tzinfo else datetime.now()
+                hours_to_res = (res_dt - now).total_seconds() / 3600
+                
+                if hours_to_res < MIN_TIME_TO_RESOLUTION_HOURS:
+                    print(f" -> [PROTECT] Skipping {m_id}: Resolution too close ({hours_to_res:.1f}h). Avoiding leakage.")
+                    continue
+            except: pass
+
         # 1. Extract Thresholds
         upper_bound = float('inf')
         lower_bound = float('-inf')
@@ -468,14 +506,27 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
             f_star = (b * p_win - (1 - p_win)) / b if b > 0 else 0
             
             size_usdc = f_star * KELLY_FRACTION * bankroll
-            # Dynamic Scaling: Allow sizes to scale with bankroll, capped at 20%
+            
+            # --- REAL-WORLD HARDENING ---
+            # 1. Liquidity Cap: Don't take more than X% of available depth
+            available_liquidity = market.get("ask_liquidity" if "buy" in side else "bid_liquidity", 0)
+            if available_liquidity > 0:
+                liquidity_limit = available_liquidity * MAX_LIQUIDITY_TAKE_PCT
+                size_usdc = min(size_usdc, liquidity_limit)
+                if size_usdc < liquidity_limit * 0.1: # If our calculated size is tiny, ignore it
+                    pass 
+            else:
+                # If no order book data, use a very small fixed cap
+                size_usdc = min(size_usdc, 5.0)
+
+            # 2. Dynamic Scaling: Allow sizes to scale with bankroll, capped at 10%
             final_size = max(0, min(size_usdc, bankroll * MAX_POSITION_SIZE_PCT))
             
-            if final_size > 0.5:
+            if final_size > 1.0: # Minimum trade size increased to $1
                 ev_values[m_id] = round(best_ev, 4)
                 position_sizes[m_id] = round(final_size, 4)
                 trade_sides[m_id] = side
-                print(f" -> Approved Symbiotic Arb: {m_id} | Side: {side} | EV: {best_ev:.2f} | Size: {final_size:.2f}")
+                print(f" -> Approved Symbiotic Arb: {m_id} | Side: {side} | EV: {best_ev:.2f} | Size: {final_size:.2f} (Liq Cap applied)")
 
     return {
         "ev_values": ev_values,
@@ -626,24 +677,31 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
             limit_price = round(max(0.005, min(0.995, limit_price)), 3)
 
             if PAPER_TRADING_MODE:
+                # --- SLIPPAGE SIMULATION ---
+                # Calculate a more realistic execution price based on slippage
+                # Simple model: Price increases by 0.5% for every $1000 of liquidity taken
+                available_liq = market.get("ask_liquidity" if order_side == "buy" else "bid_liquidity", 1.0)
+                slippage_factor = (size / max(1.0, available_liq)) * 0.02 # Max 2% slippage on full book take
+                
+                execution_price = limit_price * (1 + slippage_factor if order_side == "buy" else 1 - slippage_factor)
+                execution_price = round(max(0.005, min(0.995, execution_price)), 3)
+
                 # Simulate Latency (Forward Testing requirement)
-                latency = np.random.uniform(0.2, 0.8)
+                latency = np.random.uniform(0.5, 1.5) # Increased latency
                 time.sleep(latency)
                 
-                print(f" -> [PAPER] Maker Order: {real_m_id} ({'YES' if is_yes else 'NO'}) | {order_side} | Price: {limit_price} | Latency: {latency:.2f}s")
+                print(f" -> [PAPER] Maker Order: {real_m_id} | {order_side} | Limit: {limit_price} | Exec: {execution_price} | Slippage: {slippage_factor*100:.2f}%")
                 
-                # Update Virtual Wallet (Deduct for buys, credit for sells - simplified)
+                # Update Virtual Wallet
                 current_bal = db.get_latest_bankroll(mode='PAPER', default=DEFAULT_BANKROLL)
                 if order_side == "buy":
                     new_bal = current_bal - size
                 else: 
-                    # For selling in paper mode, we assume the full position value is returned for simplicity
-                    # or we just log it. Real P&L tracking would be more complex (needs resolutions).
-                    new_bal = current_bal + (size * limit_price) 
+                    new_bal = current_bal + (size * execution_price) 
                 
                 db.update_bankroll(new_bal, new_bal, mode='PAPER')
-                db.log_trade(real_m_id, order_side, size, limit_price, "paper_executed", mode='PAPER')
-                executed_trades.append({"market": real_m_id, "side": order_side, "size": size, "price": limit_price, "status": "paper"})
+                db.log_trade(real_m_id, order_side, size, execution_price, "paper_executed", mode='PAPER')
+                executed_trades.append({"market": real_m_id, "side": order_side, "size": size, "price": execution_price, "status": "paper"})
 
             elif SIMULATION_MODE:
                 print(f" -> [SIMULATION] Maker Order: {real_m_id} ({'YES' if is_yes else 'NO'}) | {order_side} | Price: {limit_price}")
