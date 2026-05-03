@@ -45,11 +45,11 @@ db = PersistenceManager()
 
 # --- 0. Global Config ---
 DEFAULT_BANKROLL = 50.0
-MAX_POSITION_SIZE_PCT = 0.20 # Increased to 0.20 to beat baseline
-KELLY_FRACTION = 0.80      # Increased to 0.80 for maximum growth
-MAX_LIQUIDITY_TAKE_PCT = 0.40 # Increased to 0.40
-STALE_PRICE_THRESHOLD_MINS = 30 # Consider price stale if no trades in 30m
-MIN_TIME_TO_RESOLUTION_HOURS = 4 # Don't bet if resolution is too close (Data Leakage protection)
+MAX_POSITION_SIZE_PCT = 0.15 # Reduced for better risk adjusted returns
+KELLY_FRACTION = 0.40      # Reduced to 0.40 to minimize variance and noise
+MAX_LIQUIDITY_TAKE_PCT = 0.30 
+STALE_PRICE_THRESHOLD_MINS = 30 
+MIN_TIME_TO_RESOLUTION_HOURS = 4 
 
 # --- 1. Shared State Definition ---
 class AgentState(TypedDict):
@@ -74,6 +74,7 @@ class AgentState(TypedDict):
     open_positions: List[Dict[str, Any]]
     bankroll: float
     in_flight_exposure: float
+    forecast_metadata: Dict[str, Dict[str, float]]
 
 # --- 2. Notifications ---
 def send_telegram_msg(message: str):
@@ -365,8 +366,8 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
         if date_match:
             target_date = date_match.group(1)
 
-        samples = []
-        # Process individual API forecasts for history and ensemble
+        api_preds = []
+        # Process individual API forecasts
         for api_name, data in [("open_meteo", om_data), ("noaa", noaa_data)]:
             if not data: continue
             
@@ -374,41 +375,54 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
             if api_name == "open_meteo":
                 api_temps = data.get("hourly", {}).get("temperature_2m", [])[:24]
             elif api_name == "noaa":
-                # Extract temperatures from NOAA periods
                 api_temps = [p.get("temperature") for p in data.get("properties", {}).get("periods", []) if p.get("temperature") is not None][:12]
             
             if api_temps:
-                api_mu = np.mean(api_temps)
-                api_sigma = np.std(api_temps) if len(api_temps) > 1 else 1.0
+                # CRITICAL FIX: Most markets are about the HIGH or LOW of the day.
+                # If the question is 'above X', we care about the MAX temperature.
+                # If the question is 'below X', we care about the MIN temperature.
+                if lower_bound != float('-inf') and upper_bound == float('inf'):
+                    pred = np.max(api_temps)
+                elif upper_bound != float('inf') and lower_bound == float('-inf'):
+                    pred = np.min(api_temps)
+                else:
+                    pred = np.mean(api_temps) # Range/Bucket questions
                 
-                # Save to History for Reliability Tracking
-                # Determine primary threshold for resolution
-                threshold = lower_bound if lower_bound != float('-inf') else upper_bound
-                db.save_forecast(m_id, api_name, float(api_mu), float(api_sigma), threshold, target_date, market["lat"], market["lon"])
-                
-                # Add to ensemble samples
+                # Weighting
                 w = api_weights.get(api_name, 1.0)
-                samples.extend(api_temps * int(w * 10))
+                api_preds.extend([pred] * int(w * 10))
 
-        if not samples:
+                # Save to History for Reliability Tracking
+                threshold = lower_bound if lower_bound != float('-inf') else upper_bound
+                db.save_forecast(m_id, api_name, float(np.mean(api_temps)), float(np.std(api_temps)), threshold, target_date, market["lat"], market["lon"])
+
+        if not api_preds:
             print(f" -> Skipping {m_id}: No ensemble data available.")
             continue
 
-        mu = np.mean(samples)
-        sigma = np.std(samples)
-        if sigma < 0.1: sigma = 0.5 
-
-        # 3. Model Probability (Likelihood) using CDF
-        z_upper = (upper_bound - mu) / sigma
-        z_lower = (lower_bound - mu) / sigma
+        mu = np.mean(api_preds)
+        
+        # 3. Model Probability (Likelihood) using Volatility-Adjusted SEM
+        # We adjust the baseline sigma (2.0) by the disagreement between APIs
+        disagreement = np.std(list(set(api_preds))) if len(set(api_preds)) > 1 else 0.5
+        adjusted_sigma = 2.0 + disagreement
+        sem = adjusted_sigma / np.sqrt(len(api_preds))
+        
+        z_upper = (upper_bound - mu) / sem
+        z_lower = (lower_bound - mu) / sem
         likelihood = stats.norm.cdf(z_upper) - stats.norm.cdf(z_lower)
         likelihood = max(0.0001, min(0.9999, likelihood))
 
-        # 4. Bayesian Updating
+        # 4. Bayesian Updating & Calibration
         prior = db.get_prior(m_id)
         evidence = (likelihood * prior) + ((1 - likelihood) * (1 - prior))
-        p_model = (likelihood * prior) / evidence if evidence > 0 else likelihood
+        unscaled_posterior = (likelihood * prior) / evidence if evidence > 0 else likelihood
+        p_model = prior + 0.7 * (unscaled_posterior - prior) # Slightly more dampening
         
+        # PRO-LEVEL: Tail-Focused Calibration
+        # Deep power transform to ignore everything except high-conviction mispricings.
+        p_model = p_model**1.5 if p_model < 0.5 else 1 - (1 - p_model)**1.5
+
         db.save_prior(m_id, float(p_model))
         
         # 5. Edge Detection (Initial Delta vs YES for logging)
@@ -418,7 +432,13 @@ def analyst_agent(state: AgentState) -> Dict[str, Any]:
         delta = p_model - p_market
         
         p_models[m_id] = round(float(p_model), 4)
-        edge_deltas[m_id] = round(float(delta), 4)
+        if "forecast_metadata" not in state: state["forecast_metadata"] = {}
+        state["forecast_metadata"][m_id] = {
+            "mu": float(mu), 
+            "sem": float(sem),
+            "lower_bound": lower_bound,
+            "upper_bound": upper_bound
+        }
         
         if abs(delta) > 0.05:
             print(f" -> Market: {m_id} | Post: {p_model:.2f} | Mkt: {p_market:.2f} | Edge: {delta:+.2f}")
@@ -497,27 +517,50 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
             ev_yes = (p_yes_model / price_yes) - 1 if price_yes > 0 else -1
             ev_no = (p_no_model / price_no) - 1 if price_no > 0 else -1
             
-            # Select the side with higher positive yield
-            if ev_yes > ev_no and ev_yes > 0.02:
+            # Mathematical Yield (EV) - Fee Aware
+            # Using a target size of $5 for EV estimation on this small bankroll
+            est_fixed_fee_impact = 0.05 / 5.0 
+            pct_fee = 0.001
+            
+            ev_yes = (p_yes_model / price_yes) - 1 - est_fixed_fee_impact - pct_fee if price_yes > 0 else -1
+            ev_no = (p_no_model / price_no) - 1 - est_fixed_fee_impact - pct_fee if price_no > 0 else -1
+            
+            # HIGH-CONVICTION THRESHOLD: EV > 8% and edge > 12%
+            edge_yes = p_yes_model - price_yes
+            edge_no = p_no_model - price_no
+            
+            is_uncertain = 0.38 < p_yes_model < 0.62 
+
+            if not is_uncertain and ev_yes > ev_no and ev_yes > 0.08 and edge_yes > 0.12:
                 best_ev = ev_yes
                 side = "buy_yes"
                 p_win = p_yes_model
                 price_entry = price_yes
-            elif ev_no > ev_yes and ev_no > 0.02:
+            elif not is_uncertain and ev_no > ev_yes and ev_no > 0.10 and edge_no > 0.15:
                 best_ev = ev_no
                 side = "buy_no"
                 p_win = p_no_model
                 price_entry = price_no
             else:
-                continue # No edge on either side
+                continue # No significant edge on either side
 
-            # Kelly Sizing for the chosen side
-            # f* = (bp - q) / b  where b is odds-1, p is win prob, q is loss prob
-            # b = (1/price) - 1
+            # Kelly Sizing with Confidence Scaling (Z-Score)
+            # We scale the Kelly fraction by how 'extreme' our prediction is
+            meta = state.get("forecast_metadata", {}).get(m_id, {})
+            mu_val = meta.get("mu", 0)
+            sem_val = meta.get("sem", 1.0)
+            l_bound = meta.get("lower_bound", float('-inf'))
+            u_bound = meta.get("upper_bound", float('inf'))
+            
+            z_conf = abs(mu_val - (l_bound if l_bound != float('-inf') else u_bound)) / sem_val
+            # Sharpened scaling: Requires 4-sigma for full size
+            conf_multiplier = min(1.0, z_conf / 4.0) 
+            
+            # f* = (bp - q) / b 
             b = (1.0 / price_entry) - 1
             f_star = (b * p_win - (1 - p_win)) / b if b > 0 else 0
             
-            size_usdc = f_star * KELLY_FRACTION * bankroll
+            size_usdc = f_star * KELLY_FRACTION * conf_multiplier * bankroll
             
             # --- REAL-WORLD HARDENING ---
             # 1. Liquidity Cap: Don't take more than X% of available depth
@@ -535,7 +578,8 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
             # AND capped by the remaining total exposure allowed for this cycle
             final_size = max(0, min(size_usdc, bankroll * MAX_POSITION_SIZE_PCT, remaining_to_allocate))
             
-            if final_size > 1.0: # Minimum trade size increased to $1
+            # Fee Guard: Minimum size to ensure fees stay under 1% for $50 bankroll
+            if final_size > 5.0: 
                 ev_values[m_id] = round(best_ev, 4)
                 position_sizes[m_id] = round(final_size, 4)
                 trade_sides[m_id] = side
