@@ -38,6 +38,11 @@ class ReliabilityManager:
         Identifies resolved markets and updates reliability weights.
         """
         print("\n[RELIABILITY] Starting Historical Forecast Backtest Loop...")
+        
+        # 1. Resolve Paper Trades FIRST (High Priority)
+        cls.resolve_paper_trades()
+        
+        # 2. Process Historical Backlog (Limited per cycle to prevent blocking)
         unresolved = db.get_unresolved_forecasts()
         
         if not unresolved:
@@ -47,7 +52,7 @@ class ReliabilityManager:
         print(f" -> Found {len(unresolved)} forecasts awaiting resolution.")
         resolved_count = 0
         
-        for f_id, m_id, api_name, target_date, mu, lat, lon in unresolved:
+        for f_id, m_id, api_name, target_date, mu, lat, lon in unresolved[:200]: # Limit to 200 per cycle
             # Check if target_date has passed (we need historical data availability)
             target_dt = datetime.strptime(target_date, "%Y-%m-%d")
             # If target date was yesterday or older, we can usually resolve
@@ -61,10 +66,7 @@ class ReliabilityManager:
                 resolved_count += 1
             
             # Rate limiting
-            time.sleep(0.5)
-
-        # NEW: Resolve Paper Trades
-        cls.resolve_paper_trades()
+            time.sleep(0.1) # Reduced sleep for performance
 
         print(f"[RELIABILITY] Backtest cycle complete. Resolved {resolved_count} forecasts.")
 
@@ -84,7 +86,7 @@ class ReliabilityManager:
                 continue
                 
             actual = cls.fetch_actual_weather(lat, lon, target_date)
-            if actual is not None:
+            if actual is not None and threshold != float('inf') and threshold != float('-inf'):
                 # Logic: Win if side matches the outcome
                 is_above = actual > threshold
                 is_yes = "yes" in side.lower()

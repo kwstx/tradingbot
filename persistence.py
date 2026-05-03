@@ -278,6 +278,15 @@ class PersistenceManager:
         conn.commit()
         conn.close()
 
+    def get_total_paper_exposure(self):
+        """Calculates total USDC locked in unresolved paper trades."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT SUM(size_usdc) FROM trades WHERE mode = 'PAPER' AND status = 'paper_executed'")
+        row = cursor.fetchone()
+        conn.close()
+        return row[0] if row[0] else 0.0
+
     def get_daily_summary(self):
         """Generates a summary for the last 24 hours."""
         conn = sqlite3.connect(self.db_path)

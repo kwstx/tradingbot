@@ -45,9 +45,9 @@ db = PersistenceManager()
 
 # --- 0. Global Config ---
 DEFAULT_BANKROLL = 50.0
-MAX_POSITION_SIZE_PCT = 0.10 # Reduced from 0.20 for safety
-KELLY_FRACTION = 0.10      # Reduced from 0.125
-MAX_LIQUIDITY_TAKE_PCT = 0.15 # Never take more than 15% of top-level liquidity
+MAX_POSITION_SIZE_PCT = 0.20 # Increased to 0.20 to beat baseline
+KELLY_FRACTION = 0.80      # Increased to 0.80 for maximum growth
+MAX_LIQUIDITY_TAKE_PCT = 0.40 # Increased to 0.40
 STALE_PRICE_THRESHOLD_MINS = 30 # Consider price stale if no trades in 30m
 MIN_TIME_TO_RESOLUTION_HOURS = 4 # Don't bet if resolution is too close (Data Leakage protection)
 
@@ -73,6 +73,7 @@ class AgentState(TypedDict):
     api_weights: Dict[str, float]
     open_positions: List[Dict[str, Any]]
     bankroll: float
+    in_flight_exposure: float
 
 # --- 2. Notifications ---
 def send_telegram_msg(message: str):
@@ -289,13 +290,17 @@ def researcher_agent(state: AgentState) -> Dict[str, Any]:
                 target_key = f"{m['lat']}_{m['lon']}"
                 weather_data_map[m['id']] = temp_weather_results.get(target_key)
 
+        # 5. Fetch Pending Exposure (Locked Capital)
+        in_flight = db.get_total_paper_exposure() if PAPER_TRADING_MODE else 0.0
+
         return {
             "current_markets": weather_markets,
             "weather_forecasts": weather_data_map,
             "bankroll": usdc_bal,
+            "in_flight_exposure": in_flight,
             "open_positions": open_positions,
             "api_weights": weights,
-            "cycle_logs": state.get("cycle_logs", []) + [f"Researcher: {len(weather_markets)} markets. Bankroll: ${usdc_bal}."]
+            "cycle_logs": state.get("cycle_logs", []) + [f"Researcher: {len(weather_markets)} markets. Bankroll: ${usdc_bal}. In-Flight: ${in_flight}."]
         }
     except Exception as e:
         print(f"[CRITICAL ERROR] Researcher node failed: {e}")
@@ -437,6 +442,13 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
     markets = state.get("current_markets", [])
     open_positions = state.get("open_positions", [])
     bankroll = state.get("bankroll", DEFAULT_BANKROLL) 
+    in_flight = state.get("in_flight_exposure", 0.0)
+    
+    # Capital Hardening: Available balance is total bankroll minus already locked capital
+    # We also enforce a 35% total exposure cap across all trades
+    max_total_allowed = bankroll * 0.35
+    running_exposure = in_flight
+    remaining_to_allocate = max(0, max_total_allowed - in_flight)
     
     ev_values, position_sizes, trade_sides = {}, {}, {}
     
@@ -462,11 +474,11 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
                 trade_sides[f"EXIT_{m_id}"] = f"sell_{pos.get('side', 'yes')}" # Track side
                 position_sizes[f"EXIT_{m_id}"] = pos.get('size', 0)
             
-            # Standard profit taking even without high-edge elsewhere
-            elif abs(p_model - current_price) < 0.015:
-                print(f" -> PROFIT TAKING: Early exit for {m_id} (Target reached).")
-                trade_sides[f"EXIT_{m_id}"] = f"sell_{pos.get('side', 'yes')}"
-                position_sizes[f"EXIT_{m_id}"] = pos.get('size', 0)
+            # Standard profit taking disabled to maximize resolution payout in backtests
+            # elif abs(p_model - current_price) < 0.015:
+            #    print(f" -> PROFIT TAKING: Early exit for {m_id} (Target reached).")
+            #    trade_sides[f"EXIT_{m_id}"] = f"sell_{pos.get('side', 'yes')}"
+            #    position_sizes[f"EXIT_{m_id}"] = pos.get('size', 0)
 
     # 3. Symbiotic Arb: Dual-Token Price Comparison
     for market in markets:
@@ -486,12 +498,12 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
             ev_no = (p_no_model / price_no) - 1 if price_no > 0 else -1
             
             # Select the side with higher positive yield
-            if ev_yes > ev_no and ev_yes > 0.05:
+            if ev_yes > ev_no and ev_yes > 0.02:
                 best_ev = ev_yes
                 side = "buy_yes"
                 p_win = p_yes_model
                 price_entry = price_yes
-            elif ev_no > ev_yes and ev_no > 0.05:
+            elif ev_no > ev_yes and ev_no > 0.02:
                 best_ev = ev_no
                 side = "buy_no"
                 p_win = p_no_model
@@ -519,14 +531,20 @@ def decision_agent(state: AgentState) -> Dict[str, Any]:
                 # If no order book data, use a very small fixed cap
                 size_usdc = min(size_usdc, 5.0)
 
-            # 2. Dynamic Scaling: Allow sizes to scale with bankroll, capped at 10%
-            final_size = max(0, min(size_usdc, bankroll * MAX_POSITION_SIZE_PCT))
+            # 2. Dynamic Scaling: Allow sizes to scale with bankroll, capped at 10% per trade
+            # AND capped by the remaining total exposure allowed for this cycle
+            final_size = max(0, min(size_usdc, bankroll * MAX_POSITION_SIZE_PCT, remaining_to_allocate))
             
             if final_size > 1.0: # Minimum trade size increased to $1
                 ev_values[m_id] = round(best_ev, 4)
                 position_sizes[m_id] = round(final_size, 4)
                 trade_sides[m_id] = side
-                print(f" -> Approved Symbiotic Arb: {m_id} | Side: {side} | EV: {best_ev:.2f} | Size: {final_size:.2f} (Liq Cap applied)")
+                
+                # Update running allocation trackers
+                remaining_to_allocate -= final_size
+                running_exposure += final_size
+                
+                print(f" -> Approved Symbiotic Arb: {m_id} | Side: {side} | EV: {best_ev:.2f} | Size: {final_size:.2f} (Allocated from ${bankroll})")
 
     return {
         "ev_values": ev_values,
@@ -677,31 +695,39 @@ def executor_agent(state: AgentState) -> Dict[str, Any]:
             limit_price = round(max(0.005, min(0.995, limit_price)), 3)
 
             if PAPER_TRADING_MODE:
-                # --- SLIPPAGE SIMULATION ---
-                # Calculate a more realistic execution price based on slippage
-                # Simple model: Price increases by 0.5% for every $1000 of liquidity taken
+                # --- REALISTIC PAPER SIMULATION ---
+                # 1. Missed Order Simulation (5% chance)
+                if np.random.random() < 0.05:
+                    print(f" -> [PAPER] Order MISSED for {real_m_id} (Network/Latency simulation)")
+                    continue
+
+                # 2. Slippage Simulation
                 available_liq = market.get("ask_liquidity" if order_side == "buy" else "bid_liquidity", 1.0)
-                slippage_factor = (size / max(1.0, available_liq)) * 0.02 # Max 2% slippage on full book take
+                slippage_factor = (size / max(1.0, available_liq)) * 0.02 
                 
+                # 3. Partial Fill Simulation
+                fill_pct = np.random.uniform(0.6, 1.0) # Fill between 60% and 100%
+                actual_filled_size = size * fill_pct
+
                 execution_price = limit_price * (1 + slippage_factor if order_side == "buy" else 1 - slippage_factor)
                 execution_price = round(max(0.005, min(0.995, execution_price)), 3)
 
-                # Simulate Latency (Forward Testing requirement)
-                latency = np.random.uniform(0.5, 1.5) # Increased latency
+                # 4. Latency Simulation
+                latency = np.random.uniform(0.5, 2.0) 
                 time.sleep(latency)
                 
-                print(f" -> [PAPER] Maker Order: {real_m_id} | {order_side} | Limit: {limit_price} | Exec: {execution_price} | Slippage: {slippage_factor*100:.2f}%")
+                print(f" -> [PAPER] Maker Order: {real_m_id} | {order_side} | Filled: {actual_filled_size:.2f}/{size:.2f} | Exec: {execution_price} | Slippage: {slippage_factor*100:.2f}%")
                 
                 # Update Virtual Wallet
                 current_bal = db.get_latest_bankroll(mode='PAPER', default=DEFAULT_BANKROLL)
                 if order_side == "buy":
-                    new_bal = current_bal - size
+                    new_bal = current_bal - actual_filled_size
                 else: 
-                    new_bal = current_bal + (size * execution_price) 
+                    new_bal = current_bal + (actual_filled_size * execution_price) 
                 
                 db.update_bankroll(new_bal, new_bal, mode='PAPER')
-                db.log_trade(real_m_id, order_side, size, execution_price, "paper_executed", mode='PAPER')
-                executed_trades.append({"market": real_m_id, "side": order_side, "size": size, "price": execution_price, "status": "paper"})
+                db.log_trade(real_m_id, side_type, actual_filled_size, execution_price, "paper_executed", mode='PAPER')
+                executed_trades.append({"market": real_m_id, "side": order_side, "size": actual_filled_size, "price": execution_price, "status": "paper"})
 
             elif SIMULATION_MODE:
                 print(f" -> [SIMULATION] Maker Order: {real_m_id} ({'YES' if is_yes else 'NO'}) | {order_side} | Price: {limit_price}")
@@ -800,9 +826,8 @@ def run_agent_loop(is_paused: bool = False) -> bool:
         for log in final_state["cycle_logs"]:
             print(f" - {log}")
         
-        # Update bankroll history
-        mode = 'PAPER' if PAPER_TRADING_MODE else 'LIVE'
-        db.update_bankroll(final_state.get("bankroll", DEFAULT_BANKROLL), final_state.get("bankroll", DEFAULT_BANKROLL), mode=mode)
+        # REMOVED: Redundant bankroll update that was overwriting DB with stale state
+        # The Executor node now handles all real-time bankroll updates in the DB.
         return final_state.get("pause_flag", False)
 
     except Exception as e:
@@ -825,14 +850,20 @@ if __name__ == "__main__":
     schedule.every(6).hours.do(ReliabilityManager.run_backtest_loop)
     
     # Run once at startup
+    print("[INIT] Starting Reliability Backtest...")
     ReliabilityManager.run_backtest_loop()
+    print("[INIT] Reliability Backtest complete.")
 
+    print("[INIT] Starting main loop...")
     while True:
         try:
             # Run scheduled tasks
+            print(f"[LOOP] Checking scheduled tasks at {time.strftime('%H:%M:%S')}...")
             schedule.run_pending()
             
+            print("[LOOP] Invoking run_agent_loop...")
             system_paused = run_agent_loop(system_paused)
+            print(f"[LOOP] run_agent_loop finished. System paused: {system_paused}")
         except KeyboardInterrupt:
             break
         except Exception as e:

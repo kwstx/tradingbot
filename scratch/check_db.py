@@ -1,40 +1,29 @@
 import sqlite3
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 
-def check_bot_status():
-    conn = sqlite3.connect('trading_bot.db')
-    
-    print("--- Last 10 Trades ---")
-    trades = pd.read_sql_query("SELECT * FROM trades ORDER BY timestamp DESC LIMIT 10", conn)
-    print(trades)
-    
-    print("\n--- Last 10 Bankroll Updates ---")
-    bankroll = pd.read_sql_query("SELECT * FROM bankroll_history ORDER BY timestamp DESC LIMIT 10", conn)
-    print(bankroll)
-    
-    print("\n--- Recent Logs/Errors (if any) ---")
-    # Checking if there's a logs table
-    cursor = conn.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = cursor.fetchall()
-    print(f"Tables: {tables}")
-    
-    if ('logs',) in tables:
-        logs = pd.read_sql_query("SELECT * FROM logs ORDER BY timestamp DESC LIMIT 10", conn)
-        print(logs)
-    
-    if ('priors',) in tables:
-        print("\n--- Last 5 Priors ---")
-        priors = pd.read_sql_query("SELECT * FROM priors ORDER BY timestamp DESC LIMIT 5", conn)
-        print(priors)
+db_path = "trading_bot.db"
 
-    if ('forecast_history',) in tables:
-        print("\n--- Last 5 Forecasts ---")
-        forecasts = pd.read_sql_query("SELECT * FROM forecast_history ORDER BY timestamp DESC LIMIT 5", conn)
-        print(forecasts)
+def check_status():
+    conn = sqlite3.connect(db_path)
+    
+    print("--- Bankroll History (Last 5) ---")
+    df_bankroll = pd.read_sql_query("SELECT * FROM bankroll_history WHERE mode = 'PAPER' ORDER BY timestamp DESC LIMIT 5", conn)
+    print(df_bankroll)
+    
+    print("\n--- Recent Trades (Last 10) ---")
+    df_trades = pd.read_sql_query("SELECT * FROM trades WHERE mode = 'PAPER' ORDER BY timestamp DESC LIMIT 10", conn)
+    print(df_trades)
+    
+    print("\n--- Trade Status Summary ---")
+    df_status = pd.read_sql_query("SELECT status, count(*), sum(pnl) FROM trades WHERE mode = 'PAPER' GROUP BY status", conn)
+    print(df_status)
+
+    print("\n--- API Weight Performance ---")
+    df_weights = pd.read_sql_query("SELECT * FROM api_weights", conn)
+    print(df_weights)
 
     conn.close()
 
 if __name__ == "__main__":
-    check_bot_status()
+    check_status()
