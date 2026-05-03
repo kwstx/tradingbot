@@ -196,6 +196,21 @@ class BacktestEngine:
         returns = df_trades['pnl'] / DEFAULT_BANKROLL
         sharpe = (returns.mean() / returns.std()) * np.sqrt(365) if len(returns) > 1 and returns.std() > 0 else 0
         
+        # --- Step 4: Compute Expectancy (EV) ---
+        win_rate = df_trades['won'].mean()
+        loss_rate = 1 - win_rate
+        avg_win = df_trades[df_trades['won'] == True]['pnl'].mean() if not df_trades[df_trades['won'] == True].empty else 0
+        avg_loss = abs(df_trades[df_trades['won'] == False]['pnl'].mean()) if not df_trades[df_trades['won'] == False].empty else 0
+        expectancy = (win_rate * avg_win) - (loss_rate * avg_loss)
+        
+        # Periodic EV (Check if EV stays positive across periods)
+        df_trades['timestamp'] = pd.to_datetime(df_trades['timestamp'])
+        df_trades['period'] = df_trades['timestamp'].dt.to_period('W').astype(str)
+        periodic_stats = df_trades.groupby('period').apply(
+            lambda x: (x['won'].mean() * x[x['won']==True]['pnl'].mean() if not x[x['won']==True].empty else 0) - 
+                      ((1-x['won'].mean()) * abs(x[x['won']==False]['pnl'].mean()) if not x[x['won']==False].empty else 0)
+        )
+
         print("\n" + "="*40)
         print(f"REALISTIC BACKTEST RESULTS: {mode_str}")
         print("="*40)
@@ -203,8 +218,18 @@ class BacktestEngine:
         print(f"Total ROI:        {roi:.2%}")
         print(f"Sharpe Ratio:     {sharpe:.2f}")
         print(f"Total Trades:     {len(df_trades)}")
+        print(f"Win Rate:         {win_rate:.2%}")
+        print(f"Avg Win:          ${avg_win:.2f}")
+        print(f"Avg Loss:         ${avg_loss:.2f}")
+        print(f"EXPECTANCY (EV):  ${expectancy:.2f} per trade")
+        print("-" * 40)
+        print("EV BY PERIOD (Weekly):")
+        for period, ev in periodic_stats.items():
+            status = "POS" if ev > 0 else "NEG"
+            marker = "[+]" if ev > 0 else "[-]"
+            print(f"  {period}: ${ev:6.2f} {marker} {status}")
+        print("-" * 40)
         print(f"Fill Rate:        {(df_trades['filled_size'].sum() / df_trades['requested_size'].sum()):.2%}")
-        print(f"Win Rate:         {(df_trades['won'].sum() / len(df_trades)):.2%}")
         print(f"Total Fees Paid:  ${df_trades['fee'].sum():.2f}")
         print("="*40)
 

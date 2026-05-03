@@ -324,11 +324,30 @@ class PersistenceManager:
             conn.close()
             return {"status": "No paper trading data found."}
             
+        # 3. Calculate Expectancy (EV)
+        # Fetch all resolved paper trades
+        cursor.execute("SELECT won, pnl FROM trades WHERE mode = 'PAPER' AND status IN ('WON', 'LOST')")
+        trades = cursor.fetchall()
+        
+        expectancy = 0
+        win_rate = 0
+        avg_win = 0
+        avg_loss = 0
+        
+        if trades:
+            wins = [t[1] for t in trades if t[0] == 1]
+            losses = [abs(t[1]) for t in trades if t[0] == 0]
+            num_trades = len(trades)
+            win_rate = len(wins) / num_trades
+            avg_win = sum(wins) / len(wins) if wins else 0
+            avg_loss = sum(losses) / len(losses) if losses else 0
+            expectancy = (win_rate * avg_win) - ((1 - win_rate) * avg_loss)
+
         initial_bal = balances[0]
         current_bal = balances[-1]
         roi = ((current_bal - initial_bal) / initial_bal) * 100 if initial_bal > 0 else 0
         
-        # 3. Max Drawdown (Simple calculation)
+        # 4. Max Drawdown (Simple calculation)
         peak = 0
         max_dd = 0
         for b in balances:
@@ -343,6 +362,10 @@ class PersistenceManager:
             "initial_balance": round(initial_bal, 2),
             "current_balance": round(current_bal, 2),
             "roi_pct": round(roi, 2),
+            "expectancy_per_trade": round(expectancy, 4),
+            "win_rate_pct": round(win_rate * 100, 2),
+            "avg_win": round(avg_win, 2),
+            "avg_loss": round(avg_loss, 2),
             "max_drawdown_pct": round(max_dd * 100, 2),
             "timestamp": datetime.now().isoformat()
         }
